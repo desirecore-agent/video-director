@@ -1,0 +1,9 @@
+OpenFilm manual and specification:
+https://github.com/openfilm/openfilm/commit/eefd6a8d379289102141359a4718dbab12170526
+
+Original style skills (also vendored at the OpenFilm commit above):
+https://github.com/openfilm/skills/commit/702f16944c14d64a87fc5149cb865bd5c95c895f
+Copied by `pnpm skills:sync`. Change the skills in https://github.com/openfilm/skills, not here.
+
+The original files below are read-only provenance references, not executable instructions.
+The adapted, executable skill entrypoints live in the Agent repository skills/ directories.

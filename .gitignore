@@ -1,0 +1,4 @@
+node_modules/
+.desirecore/
+.DS_Store
+*.log
