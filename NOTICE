@@ -1,0 +1,33 @@
+视频导演 / Video Director
+
+This is an independent DesireCore Agent content repository. The application is
+maintained separately at https://github.com/desirecore-agent/video-creation.
+This repository is not an official OpenFilm product and has no affiliation or
+endorsement from the OpenFilm project.
+
+Reused sources:
+
+1. OpenFilm manual, film specification and trademark policy
+   https://github.com/openfilm/openfilm
+   Commit: eefd6a8d379289102141359a4718dbab12170526
+   Original files are preserved under skills/video-creation/references/upstream/.
+
+2. OpenFilm creative skills
+   https://github.com/openfilm/skills
+   Commit: 702f16944c14d64a87fc5149cb865bd5c95c895f
+   The same skill sources were vendored in the OpenFilm commit above.
+   Original texts are preserved under skills/video-creation/references/upstream/skills/.
+   Adapted copies live in the Agent's skills/ directories.
+
+Copyright (c) 2026 OpenFilm contributors. MIT License; full notice is preserved
+in licenses/OpenFilm-MIT.txt. Original skill cover images were not copied.
+
+Adaptations replace the original CLI download and embedded Agent flow with the
+installed video-creation application, preserve revision-aware editing, and defer
+media service access and paid requests to the platform's existing authorization.
+Role, standing instructions, local CLI locator, tests and integration guide are
+maintained by desirecore-agent contributors under the repository MIT License.
+
+OpenFilm's name in the source references and copyright notices is retained for
+accurate attribution. The independent product is named 视频创作; its associated
+Agent is named 视频导演.

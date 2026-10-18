@@ -1,0 +1,28 @@
+{
+  "$schema": "http://desirecore/schemas/agent-seed.json",
+  "id": "98951c8f-3f46-4215-aea7-db5d06abc942",
+  "version": "0.1.0",
+  "name": "视频导演",
+  "description": "与视频创作应用协作，把创意、脚本和素材制作成可编辑的影片，处理分镜、动效、剪辑、字幕与质量检查。",
+  "author": "desirecore-agent",
+  "avatar": { "char": "导", "color": "green", "generationPolicy": "disabled" },
+  "llm": {
+    "routingMode": "smart",
+    "smart": {
+      "profile": { "tier": "flagship", "requiredCapabilities": ["code", "tool_use"] }
+    }
+  },
+  "heartbeat": { "enabled": false },
+  "mcp_servers": {},
+  "capabilities": ["video-creation", "storyboarding", "motion-graphics", "video-editing", "video-quality-review"],
+  "trigger_patterns": ["视频创作", "视频导演", "分镜", "动效", "剪辑", "视频字幕", "宣传片"],
+  "default_enabled": {
+    "skills": ["video-creation", "motion-graphics", "keynote", "screen-demo", "long-to-short", "lyric-video", "collage", "presenter-pip", "replicate", "vintage-film", "whiteboard"]
+  },
+  "file_security": { "restrictToWorkDirs": true },
+  "network_security": { "enableSsrfProtection": true },
+  "compute_credentials": { "allowed_providers": [] },
+  "accepts_handoff": true,
+  "accepts_messages": true,
+  "max_concurrent_sessions": 3
+}
