@@ -95,9 +95,11 @@ test('经目录软链或 Windows junction 启动时真实执行 CLI 并保留参
   symlinkSync(dirname(wrapper), shortcut, process.platform === 'win32' ? 'junction' : 'dir');
   const aliasedWrapper = resolve(shortcut, 'video-creation.mjs');
   const args = ['motion-inspect', '项目 有空格', 'clip-a', '--home', '隔离 home'];
-  const success = spawnSync(process.execPath, [aliasedWrapper, '--app-root', app, ...args], { cwd: root, encoding: 'utf8' });
-  assert.equal(success.status, 0, success.stderr);
-  assert.deepEqual(JSON.parse(success.stdout), { args, cwd: root });
+  for (const flags of [[], ['--preserve-symlinks-main']]) {
+    const success = spawnSync(process.execPath, [...flags, aliasedWrapper, '--app-root', app, ...args], { cwd: root, encoding: 'utf8' });
+    assert.equal(success.status, 0, success.stderr);
+    assert.deepEqual(JSON.parse(success.stdout), { args, cwd: root });
+  }
   const failure = spawnSync(process.execPath, [aliasedWrapper, '--app-root', app, '--fail'], { cwd: root, encoding: 'utf8' });
   assert.equal(failure.status, 7);
   assert.deepEqual(JSON.parse(failure.stdout).args, ['--fail']);

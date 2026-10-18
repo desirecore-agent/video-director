@@ -2,7 +2,7 @@
 /** 定位已安装的视频创作并调用其领域 CLI；不经 shell，也不下载软件。 */
 import { existsSync, realpathSync } from 'node:fs';
 import { dirname, isAbsolute, resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 
 const agentRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
@@ -69,7 +69,7 @@ export async function main(args = process.argv.slice(2)) {
   }
 }
 
-if (process.argv[1] && existsSync(process.argv[1]) && import.meta.url === pathToFileURL(realpathSync(resolve(process.argv[1]))).href) {
+if (process.argv[1] && existsSync(process.argv[1]) && realpathSync(fileURLToPath(import.meta.url)) === realpathSync(resolve(process.argv[1]))) {
   main().then((code) => { process.exitCode = code; }).catch((error) => {
     process.stderr.write(`video-director: ${error.message}\n`);
     process.exitCode = 1;
