@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync, realpathSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, realpathSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { resolve } from 'node:path';
+import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { locateApplication, parseArguments } from '../skills/video-creation/scripts/video-creation.mjs';
@@ -86,4 +86,19 @@ test('双横线之后的开关交给领域 CLI，避免与定位选项冲突', (
   const result = spawnSync(process.execPath, [wrapper, '--app-root', app, '--', ...args], { cwd: root, encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr);
   assert.deepEqual(JSON.parse(result.stdout), { args, cwd: root });
+});
+
+
+test('经目录软链或 Windows junction 启动时真实执行 CLI 并保留参数与退出码', (t) => {
+  const { root, app } = fixture(t);
+  const shortcut = resolve(root, '技能 快捷目录');
+  symlinkSync(dirname(wrapper), shortcut, process.platform === 'win32' ? 'junction' : 'dir');
+  const aliasedWrapper = resolve(shortcut, 'video-creation.mjs');
+  const args = ['motion-inspect', '项目 有空格', 'clip-a', '--home', '隔离 home'];
+  const success = spawnSync(process.execPath, [aliasedWrapper, '--app-root', app, ...args], { cwd: root, encoding: 'utf8' });
+  assert.equal(success.status, 0, success.stderr);
+  assert.deepEqual(JSON.parse(success.stdout), { args, cwd: root });
+  const failure = spawnSync(process.execPath, [aliasedWrapper, '--app-root', app, '--fail'], { cwd: root, encoding: 'utf8' });
+  assert.equal(failure.status, 7);
+  assert.deepEqual(JSON.parse(failure.stdout).args, ['--fail']);
 });
