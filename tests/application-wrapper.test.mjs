@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync, realpathSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { locateApplication, parseArguments } from '../skills/video-creation/scripts/video-creation.mjs';
 
@@ -101,4 +101,12 @@ test('经目录软链或 Windows junction 启动时真实执行 CLI 并保留参
   const failure = spawnSync(process.execPath, [aliasedWrapper, '--app-root', app, '--fail'], { cwd: root, encoding: 'utf8' });
   assert.equal(failure.status, 7);
   assert.deepEqual(JSON.parse(failure.stdout).args, ['--fail']);
+});
+
+test('标准输入导入包装器不执行入口，也不把不存在的 argv 当作路径解析', () => {
+  const result = spawnSync(process.execPath, ['--input-type=module', '-'], {
+    input: `await import(${JSON.stringify(pathToFileURL(wrapper).href)});`, encoding: 'utf8',
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout, '');
 });

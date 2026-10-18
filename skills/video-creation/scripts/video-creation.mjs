@@ -69,7 +69,7 @@ export async function main(args = process.argv.slice(2)) {
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(resolve(process.argv[1]))).href) {
+if (process.argv[1] && existsSync(process.argv[1]) && import.meta.url === pathToFileURL(realpathSync(resolve(process.argv[1]))).href) {
   main().then((code) => { process.exitCode = code; }).catch((error) => {
     process.stderr.write(`video-director: ${error.message}\n`);
     process.exitCode = 1;
