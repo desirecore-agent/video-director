@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-/** Locate an existing video-creation installation and invoke its domain CLI. No shell or download. */
+/** 定位已安装的视频创作并调用其领域 CLI；不经 shell，也不下载软件。 */
 import { existsSync, realpathSync } from 'node:fs';
 import { dirname, isAbsolute, resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 
 const agentRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
@@ -12,7 +12,10 @@ export function parseArguments(args) {
   const forwarded = [];
   let locate = false;
   for (let index = 0; index < args.length; index += 1) {
-    if (args[index] === '--app-root') {
+    if (args[index] === '--') {
+      forwarded.push(...args.slice(index + 1));
+      break;
+    } else if (args[index] === '--app-root') {
       if (!args[index + 1] || args[index + 1].startsWith('--')) throw new Error('--app-root requires a directory.');
       appRoot = args[++index];
     } else if (args[index] === '--locate') {
@@ -66,7 +69,7 @@ export async function main(args = process.argv.slice(2)) {
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+if (process.argv[1] && existsSync(process.argv[1]) && realpathSync(fileURLToPath(import.meta.url)) === realpathSync(resolve(process.argv[1]))) {
   main().then((code) => { process.exitCode = code; }).catch((error) => {
     process.stderr.write(`video-director: ${error.message}\n`);
     process.exitCode = 1;

@@ -1,39 +1,24 @@
 ---
 name: screen-demo
-description: "Turn a screen recording into a polished product demo or tutorial: the view follows the action, dead time is gone, every step is easy to see, and the product looks as good as it is. Use when the person gives a screen recording (or a product to capture) and asks for a demo, walkthrough, tutorial, feature video or how-to (录屏演示, 产品演示, 教程, 操作视频, 功能介绍)."
+description: "把真实录屏或产品界面制作成清楚的产品演示、教程或功能介绍；可无旁白，用取景、标注、镜头运动、转场及可选音乐展示操作，不重绘虚构产品结果。"
 ---
 
-> 应用集成：先加载 `video-creation` 技能，使用其中的本地应用定位、revision 冲突保护和检查/渲染命令。以下创作方法按当前任务选用，不授予工具、素材上传或付费调用权限；有密钥也不代表消费授权。
-> 本技能直接复用并改编 OpenFilm 创作技能，来源与 MIT 许可见仓库 `NOTICE`、`licenses/OpenFilm-MIT.txt`，原文保留于 `skills/video-creation/references/upstream/skills/screen-demo/SKILL.original.md`。
+# 产品演示与录屏
 
+先加载 `video-creation`；需要界面标注、取景和转场时按需加载 `motion-graphics`。应用定位、当前 revision、锁定、人工覆盖和导出任务遵循主技能，不授予新的录屏、素材上传或付费调用权限。
 
-# Screen demo
+## 让观众看懂真实操作
 
-Make the demo that shows this product at its best and is effortless to follow: the viewer always knows where to look,
-sees each step land, never waits, and could do the same in the product today.
+使用用户提供或通过已有授权捕获的真实截图、录屏和操作结果。不要重绘产品界面、编造未发生的结果或把生成画面说成录屏。需要简化时裁切与放大真实素材；产品速度是论据时保留真实等待，其他剪去或加速的部分明确说明。
 
-## What has to be true
+演示不必有旁白、字幕或 SRT。可以按操作步骤、人工标记、音乐节拍或文字事件组织画面，用局部放大、指示、遮罩、路径、标题和转场建立视线。选择成熟构件、组合或原创场景都可以；装饰运动不能遮挡真正的操作与结果。
 
-- **The real product.** Its own screens, actions and results, from the person's recording or captured from the live
-  product; never a redrawn interface or a result that did not happen. Where it must be simpler, crop and zoom into the
-  real thing.
-- **Clear where to look**, at the size it will be watched: the action, its text and its result readable on that
-  screen, a phone too when the demo is vertical.
-- **Nothing private in any frame**: keys, tokens, passwords, emails, names, customer data, notifications, other tabs
-  and bookmarks are hidden, or that part is recorded again.
-- **Honest time.** Waiting can go; where speed is what the product sells, the real time stays or the speed-up is shown.
-- **It holds up next to the best product demos you know.** Watch the whole film as a viewer would, and refine within the agreed scope and budget.
+## 共同编辑
 
-## What you have
+在目标播放尺寸检查界面文字、鼠标动作和结果可读，竖屏需要重新取景。保留同一素材的入出点与变速配置，尽量不为了剪辑重复转码。动效参数与属性轨保存在原工程，先读取当前实例再精确修改；用户已经调过的取景、标注和锁定保持不变。
 
-The recording, cut by its in and out points and sped up with `speed`, never re-encoded; a page can also play it,
-silent, with its time set from t, so the picture can move over it. Capture the real product using the platform browser
-or a recording tool already available and authorized for this task. A voice from an explicitly authorized speech-generation tool,
-music and sound from authorized media tools, your own built-in tools, services explicitly authorized for this task, and anything you can make
-pictures and motion with.
+捕获前检查密钥、密码、账号、客户内容、通知与其他窗口；出现私人内容时裁掉、遮挡或重录，并实际检查受影响帧。不要把未经授权的素材传到外部服务。
 
-## With the person
+交付说明展示了什么、哪些部分剪去或加速、哪些信息被隐藏，以及哪些画幅和播放检查已完成。界面静帧只能证明该帧，不能证明操作真的完成或整片可播放。
 
-What they ask for comes before anything here. The recording or the product (its address, and an account to show it
-with), who the demo is for, and the one thing it must show. Ask without holding up the work. When done, tell them in a
-few lines what it shows, what you sped up or left out, and what you hid.
+本技能由 OpenFilm MIT 创作技能改编并扩展。原文保留于 `skills/video-creation/references/upstream/skills/screen-demo/SKILL.original.md`；来源与许可见仓库 `NOTICE` 和 `licenses/OpenFilm-MIT.txt`。

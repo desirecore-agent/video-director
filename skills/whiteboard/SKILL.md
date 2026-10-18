@@ -1,44 +1,24 @@
 ---
 name: whiteboard
-description: "Make an explainer drawn on a board while a voice explains, every drawing and word drawn out as it is spoken. Use for lessons, micro-lectures, training, how-it-works and concept explainers, when the person turns a document, slides or notes into an explainer, or asks for a whiteboard, hand-drawn, sketch or doodle style (白板, 手绘, 讲解, 微课, 课件)."
+description: "制作白板、手绘、路径图解、课程或原理解释：图形和文字随想法逐步展开。可按人工标记、文字事件、音乐或可选旁白组织，不要求先生成语音或字幕。"
 ---
 
-> 应用集成：先加载 `video-creation` 技能，使用其中的本地应用定位、revision 冲突保护和检查/渲染命令。以下创作方法按当前任务选用，不授予工具、素材上传或付费调用权限；有密钥也不代表消费授权。
-> 本技能直接复用并改编 OpenFilm 创作技能，来源与 MIT 许可见仓库 `NOTICE`、`licenses/OpenFilm-MIT.txt`，原文保留于 `skills/video-creation/references/upstream/skills/whiteboard/SKILL.original.md`。
+# 白板与原理图解
 
+先加载 `video-creation`；路径、描边、数据和事件可结合 `motion-graphics`。绘制方式由内容决定，旁白与字幕可选，不要求先生成声音或逐字转写。
 
-# Whiteboard explainer
+## 让关系逐步出现
 
-Make the explainer a great teacher would draw: a voice explains and the board grows with it, so the viewer watches the
-idea being built and remembers it.
+从用户的文档、数据、课件或笔记提取需要解释的关系，保留事实、数字、术语与来源。自己的说明可以帮助理解，但不能引入无依据事实；纠正来源时说明理由。文字、连线与图形的出现顺序要让观众能够跟上推理，不能用同一个淡入替代所有内容关系。
 
-The drawing is the explanation: each mark is drawn as the words that name it are spoken. A finished picture that fades
-or slides in is not a whiteboard explainer.
+可以使用 SVG 描边、路径揭示、遮罩、分组、数字和图表，也可以自主编写确定性场景。使用构件时先核对参数与数据结构，不能因为构件容量有限删掉必要解释。路径或弹簧都按绝对时间求值，逆向拖动能恢复正确状态。
 
-## What has to be true
+## 时间与人工编辑
 
-- **Drawn as it is said.** Each mark starts when the voice reaches it and is done before the next idea. Check it in the
-  frames against the voice's word times, and report how close it is.
-- **True to the source.** Every fact, number, term and example as the person's document has it. What you add is your own
-  sentence, never a new fact; what you correct, you say.
-- **Words on the board spelled right**, and readable at the size it will be watched.
-- **It holds up next to the best explainers you know**, its drawings made for this subject. Watch the whole film as a
-  viewer would, and refine within the agreed scope and budget.
-- **It stays editable**: the person can change the script, or put their own voice in its place, and the drawing still
-  lands on the words.
+人工标记、文字事件、音乐节拍或旁白锚点都能确定阶段。选择使用旁白时，实际核对图示在相关语句出现的时段，不依赖未经检查的词时间；没有语音时交付可以是完整静默作品，不虚构已生成的音轨。
 
-## What you have
+把用户需要修改的词句、数值、图形样式和时点声明为参数、数据或属性轨。先检查工程真实 revision 与锁定，局部提交，保留人工覆盖。画幅变化时重排图示与注释，不能让箭头、单位和文字挤出安全区。
 
-A voice from an explicitly authorized speech-generation tool, with a WebVTT beside it that times every word; the person's own recording gets the
-same from an authorized transcription tool. Anything you can draw and move with: the web platform and any library on it, renderers whose
-output becomes a clip, any font whose license allows it, images from authorized media tools, your own built-in tools, and services explicitly
-authorized for this task. 视频创作's own rules still hold: the picture at t depends on t alone, a page has no sound, and what
-you render elsewhere enters as a clip under `assets/` with the script that made it. Ask before downloading anything
-large onto the person's computer.
+交付说明图示表达的内容、来源、可编辑位置及真实检查范围。有声音时分别验证音画同步与导出播放；无声音时按画面自身能否读懂检查节奏，不报告不存在的试听结果。
 
-## With the person
-
-What they ask for comes before anything here. The document, slides or notes, who will watch, and their own voice if
-they have recorded it. Without a voice service, use a clearly labeled silent timing draft; do not invent a spoken audio track or request paid generation without authorization. When
-done, tell them in a few lines what the boards show, how close the drawing is to the voice, and where the script is so
-they can change it.
+本技能由 OpenFilm MIT 创作技能改编并扩展。原文保留于 `skills/video-creation/references/upstream/skills/whiteboard/SKILL.original.md`；来源与许可见仓库 `NOTICE` 和 `licenses/OpenFilm-MIT.txt`。

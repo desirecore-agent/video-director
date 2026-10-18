@@ -1,40 +1,22 @@
 ---
 name: lyric-video
-description: "Make a lyric video for a song that the artist would release as the official one — a piece made for this one song, every word landing exactly on the voice. Use when the person gives a song (with its lyrics or an .lrc file) and asks for a lyric video, a music video with words, karaoke-style lyrics or a song post (歌词视频, 动态歌词, 歌词 MV, 卡拉OK)."
+description: "把用户提供的歌曲与歌词制作成可编辑动态歌词、歌词 MV 或卡拉 OK；只在确实要表现歌词时使用。纯音乐视觉和无歌词节拍动画使用 motion-graphics，不强制转写或字幕。"
 ---
 
-> 应用集成：先加载 `video-creation` 技能，使用其中的本地应用定位、revision 冲突保护和检查/渲染命令。以下创作方法按当前任务选用，不授予工具、素材上传或付费调用权限；有密钥也不代表消费授权。
-> 本技能直接复用并改编 OpenFilm 创作技能，来源与 MIT 许可见仓库 `NOTICE`、`licenses/OpenFilm-MIT.txt`，原文保留于 `skills/video-creation/references/upstream/skills/lyric-video/SKILL.original.md`。
+# 动态歌词
 
+先加载 `video-creation`，动态文字与事件按需使用 `motion-graphics`。本技能适合确实要表现歌词的作品；纯音乐视觉没有歌词前置条件，不要求把音乐识别为字幕。
 
-# Lyric video
+## 歌词与歌声
 
-You are the director this song has been waiting for. Make its lyric video: the one the artist releases as the official
-video, that people play again and send to friends because of how it makes the song feel. It belongs to this song and
-no other. Surprise us; the expected version is not the goal.
+使用用户提供的歌词，保留原文字词、语种、标题和歌手来源。动态歌词融入画面构图，不能把普通字幕显示当作已完成歌词设计。词句出现、强调、移动与歌声关系需要实际听取和观察；目标可设为两帧内，但没有测量不能宣称达到。
 
-In a lyric video the sung words are the heart of the picture: they live in the image and move with the voice. Lyrics
-shown as subtitles are not a lyric video.
+有 LRC、词级时间或人工标记时先检查其与音频是否一致；需要转写或对齐时只用已授权工具，不擅自上传歌曲或发起付费调用。歌词可以转换为工程中的稳定文字事件，音乐节拍也可驱动非歌词的图形与镜头，两者不互相代替。
 
-## What has to be true
+## 编辑与验证
 
-- **The words live on the voice.** Each word arrives the moment it is sung, within two frames. Measure it against the
-  audio, check it independently of whatever made the times, and report honestly, in numbers, how close it is.
-- **The lyrics are the person's**, word for word and line for line, in their language.
-- **It holds up next to the best lyric videos you know.** Watch the whole film as a viewer would, and refine within the agreed scope and budget. If the same film could carry any other song, it is not done yet.
-- **It stays editable**: the person can change a word or a time later.
+声音放在工程音轨，画面由绝对时间求值。保留歌词、词句时间、参数和属性轨可编辑；修改一词或一个时点先读取当前 revision，保留人工覆盖和锁定。乱序 seek 不应累积已出现的词或丢失之前的高亮。
 
-## What you have
+在目标帧率实际比较音频与词句边界，记录检查时点、偏差和未观察部分；变速或更换音轨后重检。按目标画幅检查文字长度、分组与安全区。交付实际工程、导出 job 与文件，不把提交成功当作已试听整片。
 
-Anything you can make pictures and motion with: the web platform and any library on it, Blender or any renderer whose
-output becomes a clip, the person's footage and photos, any font whose license allows it, images, video and sound from
-explicitly authorized media tools, your own built-in tools, services explicitly authorized for this task, and the song itself to analyse.
-视频创作's own rules still hold: the picture at t depends on t alone, a page has no sound, what you render elsewhere
-enters as a clip under `assets/` with the script that made it, and Studio shows a WebVTT beside a sound as subtitles
-over the film. Ask before downloading anything large onto the person's computer.
-
-## With the person
-
-The song and its lyrics; the title and artist from the LRC or the file name, or ask. Their cover, photos, footage or a
-mood they have in mind make it theirs: ask, without holding up the work. When done, tell them in a few lines what you
-made and why it fits the song, how close the timing is, and what of theirs would make it better.
+本技能由 OpenFilm MIT 创作技能改编并扩展。原文保留于 `skills/video-creation/references/upstream/skills/lyric-video/SKILL.original.md`；来源与许可见仓库 `NOTICE` 和 `licenses/OpenFilm-MIT.txt`。

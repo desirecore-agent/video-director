@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync, realpathSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, realpathSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { locateApplication, parseArguments } from '../skills/video-creation/scripts/video-creation.mjs';
 
@@ -13,7 +13,7 @@ function fixture(t) {
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const app = resolve(root, 'video-creation');
   mkdirSync(resolve(app, 'desirecore'), { recursive: true });
-  writeFileSync(resolve(app, 'desirecore/cli.mjs'), 'console.log(JSON.stringify({args:process.argv.slice(2),cwd:process.cwd()})); process.exitCode = process.argv.includes("--fail") ? 7 : 0;');
+  writeFileSync(resolve(app, 'desirecore/cli.mjs'), 'console.log(JSON.stringify({args:process.argv.slice(2),cwd:process.cwd()})); process.exitCode = process.argv.includes("--fail") ? 7 : process.argv.includes("--conflict") ? 3 : 0;');
   return { root, app };
 }
 
@@ -54,4 +54,61 @@ test('CLI failure code propagates, and locate does not execute the CLI', (t) => 
   assert.equal(located.status, 0, located.stderr);
   assert.equal(JSON.parse(located.stdout).cli, resolve(app, 'desirecore/cli.mjs'));
   assert.throws(() => parseArguments(['--app-root']), /requires a directory/);
+});
+
+
+test('动效参数文件和精确 revision 原样送达安装应用', (t) => {
+  const { root, app } = fixture(t);
+  const args = ['motion-patch', '项目 含空格', 'clip-标题', '--base', 'revision:不可改写', '--ops', '动效 changes.json', '--home', '隔离 home'];
+  const result = spawnSync(process.execPath, [wrapper, '--app-root', app, ...args], { cwd: root, encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout), { args, cwd: root });
+});
+
+test('完整导出参数不被包装器降级或改写', (t) => {
+  const { root, app } = fixture(t);
+  const args = ['render', '项目', '--codec', 'prores4444', '--alpha', '--fps', '30000/1001', '--quality', 'master', '--frame', '9:16', '--fill', 'contain', '--width', '1080', '--height', '1920', '--range', '0-3.5', '--clip', 'clip-a', '--scale', '1', '--samples', '8', '--shutter', '0.5', '--no-audio', '--no-hardware', '--burn-subtitles', '--sidecar', 'vtt', '--output', '透明 输出', '--wait', '--timeout', '120'];
+  const result = spawnSync(process.execPath, [wrapper, '--app-root', app, ...args], { cwd: root, encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout), { args, cwd: root });
+});
+
+test('应用锁冲突保留退出码且不会自动重试', (t) => {
+  const { root, app } = fixture(t);
+  const result = spawnSync(process.execPath, [wrapper, '--app-root', app, 'motion-patch', '项目', 'clip-a', '--conflict'], { cwd: root, encoding: 'utf8' });
+  assert.equal(result.status, 3);
+  assert.equal(result.stdout.trim().split('\n').length, 1);
+});
+
+test('双横线之后的开关交给领域 CLI，避免与定位选项冲突', (t) => {
+  const { root, app } = fixture(t);
+  const args = ['motion-inspect', '项目', '--locate', '--app-root', '领域值'];
+  const result = spawnSync(process.execPath, [wrapper, '--app-root', app, '--', ...args], { cwd: root, encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout), { args, cwd: root });
+});
+
+
+test('经目录软链或 Windows junction 启动时真实执行 CLI 并保留参数与退出码', (t) => {
+  const { root, app } = fixture(t);
+  const shortcut = resolve(root, '技能 快捷目录');
+  symlinkSync(dirname(wrapper), shortcut, process.platform === 'win32' ? 'junction' : 'dir');
+  const aliasedWrapper = resolve(shortcut, 'video-creation.mjs');
+  const args = ['motion-inspect', '项目 有空格', 'clip-a', '--home', '隔离 home'];
+  for (const flags of [[], ['--preserve-symlinks-main']]) {
+    const success = spawnSync(process.execPath, [...flags, aliasedWrapper, '--app-root', app, ...args], { cwd: root, encoding: 'utf8' });
+    assert.equal(success.status, 0, success.stderr);
+    assert.deepEqual(JSON.parse(success.stdout), { args, cwd: root });
+  }
+  const failure = spawnSync(process.execPath, [aliasedWrapper, '--app-root', app, '--fail'], { cwd: root, encoding: 'utf8' });
+  assert.equal(failure.status, 7);
+  assert.deepEqual(JSON.parse(failure.stdout).args, ['--fail']);
+});
+
+test('标准输入导入包装器不执行入口，也不把不存在的 argv 当作路径解析', () => {
+  const result = spawnSync(process.execPath, ['--input-type=module', '-'], {
+    input: `await import(${JSON.stringify(pathToFileURL(wrapper).href)});`, encoding: 'utf8',
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout, '');
 });

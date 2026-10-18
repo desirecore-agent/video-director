@@ -2,7 +2,7 @@
 
 [English](README.en-US.md)
 
-与 [视频创作](https://github.com/desirecore-agent/video-creation) 应用共同工作的 DesireCore 智能体。把创意、脚本和素材制作成可编辑的影片，支持分镜、动效、录屏演示、剪辑、字幕、画中画、质量检查和导出协作。
+与 [视频创作](https://github.com/desirecore-agent/video-creation) 应用共同工作的 DesireCore 智能体。把创意、脚本、数据、音乐和素材制作成可编辑的影片，支持通用 2D／2.5D 动效、无口播产品演示、数据图解、音乐视觉、剪辑、可选字幕和导出协作。导演自主选择构件、组合或原创场景，不要求先转写口播或套用动效卡。
 
 两个产品分别维护在独立仓库。本仓库分发智能体角色、原则与技能；编辑器、播放器、媒体依赖和渲染服务由应用仓库提供。智能体使用 DesireCore 现有模型路由与工具，不捆绑第二套 Agent 运行时。
 
@@ -14,7 +14,7 @@
 4. 将应用实际安装目录通过 `VIDEO_CREATION_ROOT` 或包装器的 `--app-root` 参数提供给 Agent。源码并排检出时可自动定位旁边的 `video-creation/`，正式安装不依赖该布局。
 5. 在视频导演的应用入口中添加已安装的“视频创作”。关联只保存入口偏好；不会授予项目、工具或凭据访问，也不会自动创建通信桥。
 
-告诉视频导演：“用这些素材制作一段 30 秒的产品介绍”，或“只把第二个镜头标题改成这句话”。人工在应用里编辑后，可以继续要求导演修改指定片段。
+告诉视频导演：“不用旁白，用产品截图和音乐制作一段 30 秒介绍”，“把这组数据做成可调整数字的图解动画”，或“保留我刚调好的参数和锁定，只改第二个镜头标题”。人工在应用里编辑后，可以继续要求导演修改指定片段。
 
 ## 应用连接
 
@@ -24,11 +24,19 @@
 node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用目录> --locate
 ```
 
-它直接调用 `<应用目录>/desirecore/cli.mjs`，保留参数、退出码和原工作目录，不通过 shell、不下载官方原版、不请求模型。应用领域 CLI 提供 `start`、`inspect`、`patch`、`check`、`render` 与渲染任务查询/重试/取消；精确参数以安装版本的 `--help` 和 [主技能](skills/video-creation/SKILL.md) 为准。
+它直接调用 `<应用目录>/desirecore/cli.mjs`，保留参数、退出码和原工作目录，不通过 shell、不下载官方原版、不请求模型。应用领域 CLI 提供 `start`、`inspect`、`patch`、`motion-catalog`、`motion-inspect`、`motion-install`、`motion-take`、`motion-patch`、`check`、`render` 与渲染任务查询/重试/取消；`motion-install` 复制应用自带的本地 SDK，`motion-take` 通过现有 Saved 依赖闭包取用内置构件，是否插入时间线由导演决定；`motion-patch` 沿用真实 revision 与锁保护；渲染可传完整编码、alpha、画幅、帧率和质量参数。包装器可用 `--` 分隔应用定位选项与领域参数。精确参数以安装版本的 `--help` 和 [主技能](skills/video-creation/SKILL.md) 为准。
 
 首次 `start` 可指定应用自己的 `--home` 与 `--project`。其余命令连接同一个应用 home 的已运行服务。渲染提交成功不等于渲染完成；导演需根据 job 回执核对输出，实际查看/播放后才报告对应验证。
 
 维护者通过当前用户已认证的宿主接口关联入口：`PATCH /api/app-layout`，`op: "bind-agent"`。必须从平台读取真实的 Agent ID、sourceId、appId、entrypointId 与安装实例 ID；不能把本仓库 UUID 或示例值当作本地 Agent slug，更不能向应用网页提供平台全权 token。
+
+## 通用动效与协作
+
+创作输入可以是数据、音乐、文字事件、真实产品素材或可选旁白。现有场景与自由代码继续有效；导演可以发现项目中的构件声明、安装本地 SDK、组合场景，或自主写 HTML／CSS／SVG／Canvas／WebGL 的绝对时间场景。构件不限制作品类型，也不替代智能体的创作判断。
+
+场景以带 description 的 Schema 声明参数、默认值、结构化数据和资源，实例参数、属性轨、标记与锁保存在 `film.html`。`frame(t, context)` 在首帧前获得经过校验并按时间求值的参数；旧 `frame(t)` 兼容。声明的参数支持通用编辑，自由 Canvas 代码不自动成为可视编辑图层。
+
+修改已有作品先读取真实 revision、当前实例、轨道和人工 `overrides`；只提交需要的字段。同期修改或锁冲突后重新读取并合并，不直接换一个新基线重放旧操作，也不绕开锁写文件。交付按任务检查乱序 seek、首帧参数、目标横竖方画幅、多帧率、透明合成与成片播放，记录真实导出 job、失败和显式重试。这些是导演的执行与报告约定，不代表安装 Agent 后每个平台或媒体服务都已经验收。
 
 ## 包内内容
 
@@ -38,7 +46,8 @@ node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用
 | `persona.md`、`principles.md` | 精确 L0/L1/L2 角色与原则，L2 按需加载 |
 | `instructions.md` | 常驻的应用协作与交付约定 |
 | `skills/video-creation/` | 应用定位、影片契约、冲突保护、检查与渲染 |
-| 其他 10 个 `skills/*/` | 直接复用并适配的上游创作方法 |
+| `skills/motion-graphics/` | 通用动效、数据与事件、自主场景和检查约定 |
+| 其他 9 个 `skills/*/` | 复用上游并适配的可选创作方法 |
 | `USAGE.md` | 市场详情可读取的简明使用说明 |
 | `NOTICE`、`licenses/` | 固定来源、修改说明与上游许可 |
 
@@ -59,4 +68,4 @@ node scripts/validate.mjs --desirecore-root <DesireCore 源码目录>
 
 ## 来源与许可
 
-创作技能、原版手册和影片格式直接复用 OpenFilm 的 MIT 内容，固定版本、改动及全文许可见 [NOTICE](NOTICE) 和 [上游许可](licenses/OpenFilm-MIT.txt)。原文仅用于对照，官方命令已由本应用接入替代。智能体名为“视频导演”，应用名为“视频创作”，与 OpenFilm 官方无隶属或背书关系。
+创作技能、原版手册和影片格式直接复用 OpenFilm 的 MIT 内容，固定版本、改动及全文许可见 [NOTICE](NOTICE) 和 [上游许可](licenses/OpenFilm-MIT.txt)。原文仅用于对照，官方命令已由本应用接入替代。本轮仅参考 Overlay Studio 的构件组织方法，没有复制其受限代码、技能、模板或素材；通用动效集成与技能扩展独立实现。智能体名为“视频导演”，应用名为“视频创作”，与 OpenFilm 官方无隶属或背书关系。

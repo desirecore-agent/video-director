@@ -31,3 +31,19 @@ maintained by desirecore-agent contributors under the repository MIT License.
 OpenFilm's name in the source references and copyright notices is retained for
 accurate attribution. The independent product is named 视频创作; its associated
 Agent is named 视频导演.
+
+General-motion extensions:
+
+The parameter/data/track/event collaboration guidance, original-scene workflow,
+local SDK integration instructions, wrapper argument separator and related tests
+are independently maintained in this repository. Existing MIT OpenFilm creative
+skills were adapted for narration-optional product demos, data explainers, music
+visuals and whiteboard explanations; their original texts remain preserved.
+
+Design reference only:
+https://github.com/jeszhou/overlay-studio
+Commit: e35e1aff9dae3b3addc21f68f3bcd51f95bdc1a8
+Its component organization informed the design discussion. Overlay Studio uses
+its own restricted source-available license; no code, skills, templates or assets
+from that project are copied or distributed here. This reference does not grant
+rights under that project's license or establish affiliation or endorsement.
