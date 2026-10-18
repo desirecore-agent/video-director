@@ -1,37 +1,62 @@
 ---
 name: motion-graphics
-description: "Make premium motion graphics (an explainer, a promo, a title sequence or a data story) designed and animated at the level of a top studio, for this subject alone. Use when the person asks for motion graphics, an MG animation, an animated explainer, a promo or an intro that should look high end (高级 MG, 动效, 动画视频, 片头, 宣传动画)."
+description: "制作或修改通用 2D／2.5D 动效：无口播产品片、数据与原理解释、品牌片头、音乐视觉、动态文字、路径、遮罩、分组组合和属性动画。输入不必包含字幕或旁白；可选构件、组合现有场景或编写原创确定性场景。"
 ---
 
-> 应用集成：先加载 `video-creation` 技能，使用其中的本地应用定位、revision 冲突保护和检查/渲染命令。以下创作方法按当前任务选用，不授予工具、素材上传或付费调用权限；有密钥也不代表消费授权。
-> 本技能直接复用并改编 OpenFilm 创作技能，来源与 MIT 许可见仓库 `NOTICE`、`licenses/OpenFilm-MIT.txt`，原文保留于 `skills/video-creation/references/upstream/skills/motion-graphics/SKILL.original.md`。
+# 通用动效
 
+先加载 `video-creation` 技能，按安装版本的应用契约操作同一份影片。创作方法随目标选择，不要求先识别口播、生成字幕、挑选动效卡。应用关联不授予文件、进程、素材上传或付费调用权限。
 
-# Motion graphics
+本技能在 OpenFilm MIT 创作技能基础上扩展；原文保留于 `skills/video-creation/references/upstream/skills/motion-graphics/SKILL.original.md`。Overlay Studio 仅作为设计方法参考，未复制其代码、技能、模板或素材。来源见仓库 `NOTICE`。
 
-Make the piece a top motion studio would put in its reel: an idea for this subject, designed and moved with intent,
-that makes people understand it or want it. Surprise us; the expected version is not the goal.
+## 选择表达方法
 
-## What has to be true
+先理解观众要看懂什么、哪些事实有证据、素材和交付画幅是什么。缺少非关键内容时先推进可独立完成的部分，不因为没有旁白或 SRT 停止工作。声音可以完全省略，也可以使用用户已有音乐、音效或已获授权的生成结果。
 
-- **It belongs to this subject.** The idea, the pictures and the motion come from what it is about; nothing in it could
-  be moved into another company's film.
-- **The person's facts and brand.** Every number, name, quote and claim as they gave it, none made up; a chart's shapes
-  match its values, with units and where the data comes from; when there is a voice, the picture shows what it says as
-  it says it. Their logo, colors and type are used as given, never redrawn.
-- **It holds up next to the best motion work you know.** Watch the whole film as a viewer would, and refine within the agreed scope and budget.
-- **It stays editable**: the person can change any word or number later.
+- **使用构件**：已有构件的表达恰好适合当前对象时，检查参数 Schema、默认值、数据、依赖资源和版本，再创建独立实例。
+- **组合场景**：把文字、图表、图形、素材和镜头层组织为同一时间线上的组合；共享时间与风格，分别保留可编辑参数。层序按现有影片轨道规则处理。
+- **编写原创场景**：构件不能表达需求时，使用 HTML、CSS、SVG、Canvas 或 WebGL 自主编写 `frame(t, context)`，也可以保留兼容的 `frame(t)`。不要为了可视编辑把创意限制为构件列表。
 
-## What you have
+这三种方式可以在一部影片中共存。构件名称不是故事大纲；少量合适的构件也可以组成完整作品。需要用户继续调整的文字、数字、样式和几何参数尽量声明为参数，结构化业务数据使用数组或对象，不用约定分隔符的长字符串代替数据结构。
 
-Anything you can make pictures and motion with: the web platform and any library on it, Blender or any renderer whose
-output becomes a clip, the person's footage, photos and data, any font whose license allows it, images, video, music and
-sound from explicitly authorized media tools, your own built-in tools, and services explicitly authorized for this task. 视频创作's own rules
-still hold: the picture at t depends on t alone, a page has no sound, and what you render elsewhere enters as a clip
-under `assets/` with the script that made it. Ask before downloading anything large onto the person's computer.
+## 把时间与数据表达清楚
 
-## With the person
+影片工程 `film.html` 是时间线事实源。场景中的构件描述负责用途、版本、参数 Schema、默认值、数据 Schema 和资源；片段的 `motion` 负责当前实例参数、数据、属性轨、事件与锁定。不要另造一份只有智能体理解的 Overlay 工程。
 
-What they ask for comes before anything here. What it is about, who it is for, where it will be shown, and their
-material: a logo, colors, product shots, data, a script. Ask without holding up the work. When done, tell them in a few
-lines the idea and why it fits, where every number came from, and what of theirs would make it better.
+- 参数决定元素本身的内容、样式与布局；数据保留真实数值、单位、图例和来源。每个图表的面积、长度、刻度与标签都应与数据相符。
+- 属性轨描述具体属性随片段时间的变化；用可读的路径与关键帧记录意图。首帧使用已校验的参数，不依赖上一帧或页面加载后的二次赋值。
+- 标记可以来自人工时点、音乐节拍、文字或可选字幕锚点。按当前 `t` 求标记状态；不能把“上一次触发到哪里”的可变计数器作为播放事实源。
+- 路径、弹簧、错峰、循环和种子随机都从绝对时间求值。每次求帧都重置需要改变的属性，避免逆向拖动时残留后一个时点的颜色、透明度或图形。
+- 素材入点与时间线起点由工程映射。动效属性轨通过 `clock.offset`、`clock.speed`、`clock.duration` 与 `clock.loop` 映射局部时间，不给页面片段添加 `clip.speed`，也不改变工程音轨速度。修改片段时间后检查事件与相关音轨，不手工维护另一套漂移的时钟。
+- 横竖方布局以画幅与安全区为约束，必要时调整排版与取景。不能只压缩完整横屏构图；检查文字、图例、标注和主体在实际观看尺寸仍可读。
+
+实际字段、SDK 和工具参数以主技能及安装应用的协议为准。没有声明参数或节点绑定的自由 Canvas／WebGL 场景，不能声称已经变成可视编辑图层。
+
+## 与用户共同修改
+
+已有工程先 `inspect`，读取真实 revision、目标片段、场景声明、当前参数、属性轨、事件、人工覆盖和锁定。只改任务涉及的对象；修改一个实例不应顺手更改共享场景文件而影响其他实例。确需调整场景源代码时，通过已授权文件工具读取并核对原字节及使用它的实例；现有应用没有场景源码 CAS 写入接口，不宣称影片 revision 能保护源码。优先创建独立场景副本，再按真实 revision 仅替换目标片段的 src。确需修改共享源文件时说明影响，写入前再核对原字节，发现外部变化重新合并。
+
+使用精确的参数、数据、轨道或事件操作；不要整段替换工程掩盖修改。保护轨道锁、实例锁和属性路径锁；人工 `overrides` 在求帧后生效，不应为了让动效“看起来正确”清空它们。若人工覆盖与当前目标冲突，解释冲突并按已有授权协调处理。
+
+冲突后重新读取并合并，不能把新 revision 套在旧操作上直接重试。锁定或 Schema 拒绝不是让智能体换一种文件写法绕开的提示。
+
+## 按作品验证
+
+验证范围由本次交付决定，用真实文件和观察支持结论。对通用能力可用以下三种作品覆盖不同输入，不能把它们当作每次任务都要制作的模板：
+
+| 作品 | 主要表达 | 需要观察的结果 |
+| --- | --- | --- |
+| 无口播产品演示 | 真实截图或录屏、标注、取景、转场、可选音乐 | 没有字幕或旁白仍完整，实际界面与结果真实 |
+| 数据或原理解释 | 数据、图表、数字、路径、注释、分组 | 数值与几何一致，数据与样式可独立修改 |
+| 可选口播讲解 | 旁白、字幕锚点、图示、背景与强调 | 选择使用声音时音画有据可查，不把字幕作为唯一触发源 |
+
+交付前按需要检查：
+
+1. 默认与自定义参数在 `t=0` 即生效；资源通过 `ready` 准备完成。
+2. 同一输入版本按 `终点 → 起点 → 中间 → 起点` 等乱序求帧，关键画面保持一致。仅顺序播放通过不能证明确定性。
+3. 目标横竖方画幅与帧率分别检查布局、节奏、事件边界和音画同步；无法观察的组合明确记录。
+4. 透明输出检查 alpha 及叠在真实背景上的合成；完整成片检查时长、分辨率、帧率、声音和播放。
+5. 导出记录真实 job、输入 revision、输出路径和完成状态。任务关闭、取消、失败与显式重试分别核对；重试是新任务，不宣称断点续渲。
+6. 如果用户已经人工修改参数或锁定轨道，再次编排后核对保留情况；发生拒绝时给出实际对象和原因。
+
+使用现有模型与工具完成观察，不新增 Provider 或第二套 Agent 运行时。不能用结构检查、静态单测或旧版本截图代替当前版本真实生成与播放；跨平台检查只报告实际运行过的系统与范围。

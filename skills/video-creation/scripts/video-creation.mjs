@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Locate an existing video-creation installation and invoke its domain CLI. No shell or download. */
+/** 定位已安装的视频创作并调用其领域 CLI；不经 shell，也不下载软件。 */
 import { existsSync, realpathSync } from 'node:fs';
 import { dirname, isAbsolute, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -12,7 +12,10 @@ export function parseArguments(args) {
   const forwarded = [];
   let locate = false;
   for (let index = 0; index < args.length; index += 1) {
-    if (args[index] === '--app-root') {
+    if (args[index] === '--') {
+      forwarded.push(...args.slice(index + 1));
+      break;
+    } else if (args[index] === '--app-root') {
       if (!args[index + 1] || args[index + 1].startsWith('--')) throw new Error('--app-root requires a directory.');
       appRoot = args[++index];
     } else if (args[index] === '--locate') {
