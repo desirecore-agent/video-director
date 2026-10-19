@@ -11,22 +11,25 @@
 1. 按视频创作仓库说明安装应用并准备它的运行依赖。
 2. 通过 DesireCore 现有的 Agent 仓库导入或审核后的市场安装流程，导入 `https://github.com/desirecore-agent/video-director`。私有仓库需要平台已有的仓库访问授权。不要将源码直接复制到运行实例的 AgentFS；新建运行实例使用 ManageAgent。
 3. 在平台中给视频导演选择本次影片的工作目录，并按实际需要提供文件与进程工具的已有授权。Agent 包本身不新增工具授权或媒体服务凭据。
-4. 将应用实际安装目录通过 `VIDEO_CREATION_ROOT` 或包装器的 `--app-root` 参数提供给 Agent。源码并排检出时可自动定位旁边的 `video-creation/`，正式安装不依赖该布局。
+4. 受管应用可由 Agent 沿 `ToolCatalog` → `AppManage get` → 同一实例的 `release_history` 发现当前材料根与数据 home；安装者也可明确提供准确路径。调用包装器时显式传 `--app-root`，领域命令显式传同一实例的 `--home`。`VIDEO_CREATION_ROOT` 只配置材料根，正式安装不依赖源码并排布局；旧平台缺少数据根摘要时需安装者补充，不能搜索 home 猜路径。
 5. 在视频导演的应用入口中添加已安装的“视频创作”。关联只保存入口偏好；不会授予项目、工具或凭据访问，也不会自动创建通信桥。
 
 告诉视频导演：“不用旁白，用产品截图和音乐制作一段 30 秒介绍”，“把这组数据做成可调整数字的图解动画”，或“保留我刚调好的参数和锁定，只改第二个镜头标题”。人工在应用里编辑后，可以继续要求导演修改指定片段。
 
 ## 应用连接
 
-包装器在安装后的技能目录中：
+包装器在安装后的技能目录中；以下 `inspect` 示例用于已有 `film.html` 的工程，首次创建见主技能：
 
 ```bash
 node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用目录> --locate
+node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用目录> inspect <项目目录> --home <同一安装的应用数据目录>
 ```
 
 它直接调用 `<应用目录>/desirecore/cli.mjs`，保留参数、退出码和原工作目录，不通过 shell、不下载官方原版、不请求模型。应用领域 CLI 提供 `start`、`inspect`、`patch`、`motion-catalog`、`motion-inspect`、`motion-install`、`motion-take`、`motion-patch`、`check`、`render` 与渲染任务查询/重试/取消；`motion-install` 复制应用自带的本地 SDK，`motion-take` 通过现有 Saved 依赖闭包取用内置构件，是否插入时间线由导演决定；`motion-patch` 沿用真实 revision 与锁保护；渲染可传完整编码、alpha、画幅、帧率和质量参数。包装器可用 `--` 分隔应用定位选项与领域参数。精确参数以安装版本的 `--help` 和 [主技能](skills/video-creation/SKILL.md) 为准。
 
-首次 `start` 可指定应用自己的 `--home` 与 `--project`。其余命令连接同一个应用 home 的已运行服务。渲染提交成功不等于渲染完成；导演需根据 job 回执核对输出，实际查看/播放后才报告对应验证。
+受管安装发现的准确调用与缺省处理见[主技能](skills/video-creation/SKILL.md)：`get` 返回的 `app.instanceId` 用作 `release_history` 的 `installation_id`，后者的 `current.materialRoot` 与顶层可选 `currentData.dataRoot` 分别用于 `--app-root` 与 `--home`。这些路径不增加访问权限，也不证明服务正在运行；入口关联或应用工作请求不自动向 Bash 注入环境变量。缺少摘要时仅使用安装者明确提供的路径，不从历史版本、运行绑定或平台账本推算。
+
+已有受管服务只复用，不重复 `start` 或重新注册。确需启动且已确认没有该 home 的运行实例时，再按安装版本的运行合同使用 `start`，指定应用自己的 `--home` 与 `--project`；其余命令连接同一个应用 home 的已运行服务。渲染提交成功不等于渲染完成；导演需根据 job 回执核对输出，实际查看/播放后才报告对应验证。
 
 维护者通过当前用户已认证的宿主接口关联入口：`PATCH /api/app-layout`，`op: "bind-agent"`。必须从平台读取真实的 Agent ID、sourceId、appId、entrypointId 与安装实例 ID；不能把本仓库 UUID 或示例值当作本地 Agent slug，更不能向应用网页提供平台全权 token。
 

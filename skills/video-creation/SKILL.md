@@ -11,15 +11,25 @@ description: "在视频创作应用中创建或修改可编辑的影片，操作
 
 用户可以随时在应用里编辑同一个项目。先区分“修改已有影片”和“在获准目录首次创建”：已有 `film.html` 时，修改前读取当前影片、目标镜头与真实 revision；目录中尚无 `film.html` 时，按下节首次创建，不能要求一个不存在文件的 revision。入口关联不是文件、工具或凭据授权。
 
-用本技能目录下的包装器调用已安装应用。平台会把示例中的 `${SKILL_DIR}` 展开为本技能的实际绝对目录；`APP_ROOT` 是视频创作应用的已安装目录，`PROJECT` 是这次任务获准访问的影片目录；不要直接复制占位符。
+用本技能目录下的包装器调用已安装应用。平台会把示例中的 `${SKILL_DIR}` 展开为本技能的实际绝对目录；`APP_ROOT` 是视频创作应用的当前材料根，`APP_HOME` 是同一安装的应用数据根，`PROJECT` 是这次任务获准访问的影片目录；不要直接复制占位符。已由安装者明确配置的准确路径可以直接复用。应用入口关联、从应用提出工作请求都不保证向 Bash 注入 `VIDEO_CREATION_ROOT`、`APP_ROOT` 或 `APP_HOME`，也不额外授予文件与进程权限。
+
+路径未知时，先用平台已有的只读发现工具，不在 home 或硬盘中搜索应用：
+
+1. 用 `ToolCatalog` 的 `query: "select:AppManage"` 读取当前工具说明；若 `AppManage` 尚未出现在当前工具声明中，按平台实际说明用 `DiscoverTools` 加载后再调用。查询说明不改变授权。
+2. 用 `AppManage` 的 `get` 精确读取本次安装。`app_id` 为 `video-creation`，`source_id` 取真实安装来源；已确认是个人受管安装时可传 `{"action":"get","app_id":"video-creation","source_id":"user-managed"}`。来源或设备不明确时先用 `list` 核对，不猜来源、不从多个结果里取第一项。读取对应响应的 `app.instanceId`；若返回 `apps` 多项，先核实本次入口与设备对应的真实实例。
+3. 对该实例调用 `{"action":"release_history","installation_id":"上一步的真实 instanceId"}`。从同一响应读取 `current.materialRoot` 作为 `APP_ROOT`、顶层 `currentData.dataRoot` 作为 `APP_HOME`。`currentData` 是可选摘要，仅在当前安装及数据登记核验通过时返回；不取历史版本的路径，也不从 `get` 虚构 `instanceRecord` 或从 `runtime_read` 的运行绑定推算 home。
+
+这两个路径只是定位信息，不证明运行健康，也不增加访问权限。旧平台可能没有 `currentData`，无正式数据登记时也会缺省；此时仅使用安装者明确提供的 `APP_HOME`。当前材料根缺失时同样先核安装接线，不以历史路径兜底。没有准确路径或所需工具不可用时，说明缺少哪项接线信息并向安装者询问；不要递归搜索 home、按目录时间猜版本、读取平台安装账本或 token 文件，也不要反复执行 `--locate`。
+
+取得准确路径后，显式把材料根交给包装器，并在后续领域命令中显式传同一数据根 `--home "$APP_HOME"`。下面只核定位；空项目仍按下节先创建，不能先要求 `inspect` 成功：
 
 ```bash
 node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" --locate
 ```
 
-也可以把应用目录配置到进程环境变量 `VIDEO_CREATION_ROOT`，省略 `--app-root`。包装器仅检查显式路径、当前目录和源码仓库旁的 `video-creation/`；不会扫描硬盘、安装依赖或下载官方原版。应用不存在时告知缺失位置，通过平台正常安装流程处理。不要运行 `npx openfilm`，也不要启动 ACP/Pi 等另一套 Agent 运行时。
+安装者也可以显式配置进程环境变量 `VIDEO_CREATION_ROOT` 来省略 `--app-root`；它不配置应用数据 home，领域命令仍显式传 `--home "$APP_HOME"`。包装器仅检查显式路径、当前目录和源码仓库旁的 `video-creation/`，不会调用平台发现工具，也不会扫描硬盘、安装依赖或下载官方原版；正式受管安装不依赖源码并排布局。应用不存在时告知缺失位置，通过平台正常安装流程处理。不要运行 `npx openfilm`，也不要启动 ACP/Pi 等另一套 Agent 运行时。
 
-先读取安装应用的 `$APP_ROOT/desirecore/RUNTIME.md`，确认实际应用数据 home 与受管服务合同；需要动效 API 时直接读取 `$APP_ROOT/packages/openfilm/src/motion.d.mts` 的签名，不在空项目里搜索 SDK 定义。`APP_HOME` 是该应用服务自己的配置目录，不是 DesireCore 的 home；现有受管服务只复用，不重复 `start`、重启或注册另一实例，也不因新建影片重新准备运行依赖。只有本次任务确需启动服务且已确认该 home 没有运行实例时，才按安装版本的 `--help` 和运行合同使用 `start`；其返回的实际地址由应用宿主或可用浏览器打开，不猜端口。
+先读取安装应用的 `$APP_ROOT/desirecore/RUNTIME.md`，确认安装版本的 home 用法与受管服务合同；该文档描述运行规则，不代替本次实例实际返回的数据根。需要动效 API 时直接读取 `$APP_ROOT/packages/openfilm/src/motion.d.mts` 的签名，不在空项目里搜索 SDK 定义。`APP_HOME` 是该应用服务自己的配置目录，不是 DesireCore 的 home；现有受管服务只复用，不重复 `start`、重启或注册另一实例，也不因新建影片重新准备运行依赖。只有本次任务确需启动服务且已确认该 home 没有运行实例时，才按安装版本的 `--help` 和运行合同使用 `start`；其返回的实际地址由应用宿主或可用浏览器打开，不猜端口。
 
 每次 `Grep`、`Glob` 或目录检查都显式提供本次目标 `path`：项目内容指向 `$PROJECT`，应用协议和 SDK 指向 `$APP_ROOT` 中的准确文件或目录。不同工具调用不保证继承上一次命令的工作目录；没有搜到文件时核对目标路径，不反复在空目录中重搜，也不扫描授权范围之外的位置。
 
