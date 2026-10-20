@@ -179,6 +179,34 @@ node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" jobs "$PRO
 
 ## 风格与素材能力
 
+### MiMo 预置语音
+
+安装版本提供 `get` 时，语音沿同一受管服务和媒体落盘合同生成，不另写 HTTP 客户端或启动另一套 Agent。先运行下面的只读目录查询，确认本次实例已连接该服务；未知命令说明安装版本尚未提供此入口，先报告版本/能力缺口，不下载原版替代：
+
+```bash
+node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" get "$PROJECT" --home "$APP_HOME"
+```
+
+MiMo 凭据仅由用户或安装者通过应用现有 Providers 设置或服务进程的 `MIMO_API_KEY` 提供。不得把 Key 放进工程、参数文件、脚本、命令行、影片 provenance、ZIP 或日志。普通 API 默认端点为 `https://api.xiaomimimo.com/v1`；服务进程的 `MIMO_API_BASE_URL` 可显式选择其他匹配端点。Token Plan 中国区端点是 `https://token-plan-cn.xiaomimimo.com/v1`，必须显式配置；Token Plan 与普通 API 的 Key 和额度不能互换，也不因失败自动切换端点。Token Plan 适用范围按 [MiMo 官方说明](https://mimo.mi.com/docs/zh-CN/tokenplan)和[快速接入](https://mimo.mi.com/docs/zh-CN/tokenplan/Token%20Plan/quick-access)核实：用户已授权的编程工具内开发和验收可沿本 CLI 执行，不能把套餐凭据伪装成产品通用后端。此说明不新增工具授权或审批流程。
+
+写一个不含凭据的媒体参数 JSON 文件。例如自然口语旁白可用：
+
+```json
+{"out":"intro-mimo","text":"一个人，为什么还要成立公司？","voice":"白桦","style":"用温暖、从容、自然的普通话，像与创业者面对面交流。数字读清楚，适度停顿，避免夸张播音腔。"}
+```
+
+将 `TTS_ARGS` 指向该文件的实际绝对路径，沿包装器生成：
+
+```bash
+node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" get "$PROJECT" tts --args "$TTS_ARGS" --via mimo --model mimo-v2.5-tts --home "$APP_HOME"
+```
+
+`out` 是无扩展名、无目录的素材名，返回的真实 `src` 位于 `assets/audio/vo/`。可用同一命令的 `voice` 动词与 `{"limit":"100"}` 参数文件读取官方预置音色；中文包括冰糖、茉莉、苏打、白桦，英文包括 Mia、Chloe、Milo、Dean；`mimo_default` 随部署集群变化。当前适配仅使用 `mimo-v2.5-tts` 预置音色，不复刻真人。发音风格进入 `user` 消息，`text` 原文独立进入 `assistant` 消息；默认不加情绪标签、不自动润色正文。协议以 [MiMo TTS 文档](https://mimo.mi.com/docs/zh-CN/api/audio/tts)为准。
+
+先试一小段并实际听取或用可用音频工具检查，再生成整片。应用只接收 `finish_reason=stop`、严格 base64 和完整 PCM WAV，返回按文件字节计算的真实 `dur`；不能按目标时长假定新音轨长度。MiMo 当前响应没有词级时间戳，因此 `get` 不伪造 VTT；对实际音频做对齐/转写，再写同名 VTT。用比例估计字幕时明确标记，不能声称已测量同步。替换旧片旁白时保留旧版本，用真实新时长调整镜头、时间线和字幕，读取实际 revision 后提交。
+
+鉴权失败、余额或套餐额度耗尽时停止，报告可理解原因而不回显原始响应或凭据。超时/断连表示未取得回执，服务可能已收到请求；先核对工程素材及已取得回执，不盲目重发付费请求，不用另一个 Provider 静默兜底。成功回执只证明音频已落盘，最终导出仍要核对音频、字幕、文件大小和可播放性。
+
 本 Agent 随附 10 个从上游直接复用并适配的技能。按需要加载，不自动给每个影片套模板：
 
 | 技能 | 适用任务 |
