@@ -25,11 +25,13 @@ node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用
 node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用目录> inspect <项目目录> --home <同一安装的应用数据目录>
 ```
 
-它直接调用 `<应用目录>/desirecore/cli.mjs`，保留参数、退出码和原工作目录，不通过 shell、不下载官方原版、不请求模型。应用领域 CLI 提供 `start`、`inspect`、`patch`、`motion-catalog`、`motion-inspect`、`motion-install`、`motion-take`、`motion-patch`、`check`、`render` 与渲染任务查询/重试/取消；`motion-install` 复制应用自带的本地 SDK，`motion-take` 通过现有 Saved 依赖闭包取用内置构件，是否插入时间线由导演决定；`motion-patch` 沿用真实 revision 与锁保护；渲染可传完整编码、alpha、画幅、帧率和质量参数。包装器可用 `--` 分隔应用定位选项与领域参数。精确参数以安装版本的 `--help` 和 [主技能](skills/video-creation/SKILL.md) 为准。
+它直接调用 `<应用目录>/desirecore/cli.mjs`，保留参数、退出码和原工作目录，不通过 shell、不下载官方原版、不请求模型。应用领域 CLI 提供 `start`、`inspect`、`patch`、`motion-catalog`、`motion-inspect`、`motion-install`、`motion-take`、`motion-patch`、`check`、`get`、`render` 与渲染任务查询/重试/取消；`motion-install` 复制应用自带的本地 SDK，`motion-take` 通过现有 Saved 依赖闭包取用内置构件，是否插入时间线由导演决定；`motion-patch` 沿用真实 revision 与锁保护；渲染可传完整编码、alpha、画幅、帧率和质量参数。包装器可用 `--` 分隔应用定位选项与领域参数。精确参数以安装版本的 `--help` 和 [主技能](skills/video-creation/SKILL.md) 为准。
 
 受管安装发现的准确调用与缺省处理见[主技能](skills/video-creation/SKILL.md)：`get` 返回的 `app.instanceId` 用作 `release_history` 的 `installation_id`，后者的 `current.materialRoot` 与顶层可选 `currentData.dataRoot` 分别用于 `--app-root` 与 `--home`。这些路径不增加访问权限，也不证明服务正在运行；入口关联或应用工作请求不自动向 Bash 注入环境变量。缺少摘要时仅使用安装者明确提供的路径，不从历史版本、运行绑定或平台账本推算。
 
 已有受管服务只复用，不重复 `start` 或重新注册。确需启动且已确认没有该 home 的运行实例时，再按安装版本的运行合同使用 `start`，指定应用自己的 `--home` 与 `--project`；其余命令连接同一个应用 home 的已运行服务。渲染提交成功不等于渲染完成；导演需根据 job 回执核对输出，实际查看/播放后才报告对应验证。
+
+已授权并连接 MiMo 后，可用 `get <项目> tts --args <无凭据JSON文件> --via mimo --model mimo-v2.5-tts --home <应用数据目录>` 制作自然口语旁白，沿同一服务保存 WAV。默认使用普通 API；Token Plan 需要安装者显式配置匹配的 `MIMO_API_BASE_URL`，不能与普通 API Key 混用或充当产品通用后端。Key 保留在现有应用凭据机制或服务环境，不能进入工程或 ZIP。MiMo 无词级时间戳，字幕需按真实新音轨对齐；回执未知时不盲目重复付费调用。参数、预置音色与执行边界见[主技能的 MiMo 语音说明](skills/video-creation/SKILL.md#mimo-预置语音)。
 
 维护者通过当前用户已认证的宿主接口关联入口：`PATCH /api/app-layout`，`op: "bind-agent"`。必须从平台读取真实的 Agent ID、sourceId、appId、entrypointId 与安装实例 ID；不能把本仓库 UUID 或示例值当作本地 Agent slug，更不能向应用网页提供平台全权 token。
 
