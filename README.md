@@ -35,6 +35,8 @@ node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用
 
 `review` 可为当前工程预览或指定已完成 job 的原编码输出生成带版本、时间点和文件摘要的观察材料；两种来源分别报告，不将预览冒充编码帧。生成回执不代表已经看过：导演需按摘要实际读取必要图片，依据可见内容说明判断和修订理由。无法读取、超出图片预算或本次模型没有视觉能力时明确报告观察缺口，保留自主创作、人工参数、DOM 覆盖和锁。精确来源、时间点和读取方法见[主技能的审片入口](skills/video-creation/SKILL.md#带版本与时间点的审片)。
 
+质量复盘按作品用途选择结构化测量、目标观看宽度和首尾材料，说明具体来源、实际时间与观察限制。测量不是审美评分；无音轨不自动是缺陷，首尾静帧不证明节奏、听感或无缝循环，也不要求每次都修片或重新导出。导演继续自主创作并保留人工锁，细节见[主技能的用途判断](skills/video-creation/SKILL.md#按用途判断与选择观察)。
+
 已授权并连接 MiMo 后，可用 `get <项目> tts --args <无凭据JSON文件> --via mimo --model mimo-v2.5-tts --home <应用数据目录>` 制作自然口语旁白，沿同一服务保存 WAV。默认使用普通 API；Token Plan 需要安装者显式配置匹配的 `MIMO_API_BASE_URL`，不能与普通 API Key 混用或充当产品通用后端。Key 保留在现有应用凭据机制或服务环境，不能进入工程或 ZIP。MiMo 无词级时间戳，字幕需按真实新音轨对齐；回执未知时不盲目重复付费调用。参数、预置音色与执行边界见[主技能的 MiMo 语音说明](skills/video-creation/SKILL.md#mimo-预置语音)。
 
 维护者通过当前用户已认证的宿主接口关联入口：`PATCH /api/app-layout`，`op: "bind-agent"`。必须从平台读取真实的 Agent ID、sourceId、appId、entrypointId 与安装实例 ID；不能把本仓库 UUID 或示例值当作本地 Agent slug，更不能向应用网页提供平台全权 token。
