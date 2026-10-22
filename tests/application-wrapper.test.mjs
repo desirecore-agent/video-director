@@ -73,6 +73,20 @@ test('完整导出参数不被包装器降级或改写', (t) => {
   assert.deepEqual(JSON.parse(result.stdout), { args, cwd: root });
 });
 
+test('审片来源、已完成任务与时间点沿已安装CLI逐字传递，不隐式渲染', (t) => {
+  const { root, app } = fixture(t);
+  const examples = [
+    ['review', '项目 含空格', '--source', 'current-project', '--times', '0,2.5', '--last', '--max-edge', '1280', '--home', '隔离 home'],
+    ['review', '项目 含空格', '--source', 'export-job', '--job', '已完成-job-原版本', '--count', '4', '--last', '--max-edge', '1280', '--home', '隔离 home'],
+  ];
+  for (const args of examples) {
+    const result = spawnSync(process.execPath, [wrapper, '--app-root', app, ...args], { cwd: root, encoding: 'utf8' });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout.trim().split('\n').length, 1);
+    assert.deepEqual(JSON.parse(result.stdout), { args, cwd: root });
+  }
+});
+
 test('MiMo素材生成沿已安装CLI，JSON路径和明确服务模型逐字保留且不带凭据', (t) => {
   const { root, app } = fixture(t);
   const args = ['get', '创业 视频', 'tts', '--args', '语音 参数.json', '--via', 'mimo', '--model', 'mimo-v2.5-tts', '--home', '隔离 应用数据'];

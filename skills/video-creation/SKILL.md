@@ -177,6 +177,35 @@ node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" jobs "$PRO
 
 `--output` 指向输出目录，不能当作 MP4 文件名。用户要求成片文件时提交渲染，记录输入 revision、job ID 与输出路径。渲染可按需传入 `--codec`、`--alpha`、`--fps`、`--quality`、`--frame`、`--fill`、`--short-edge`、`--width` 与 `--height`、`--range`、`--clip`、`--scale`、`--samples`、`--shutter`、`--no-audio`、`--no-hardware`、`--burn-subtitles` 和 `--sidecar`。帧率可写 `30000/1001`；范围写 `0-3.5`；尺寸成对提供并遵守安装版本的校验。没有 `--wait` 时只代表已提交任务。任务状态、重试和取消由应用管理：`retry <project> <jobId>`、`cancel <project> <jobId>`；不要用重复提交冒充恢复。关闭编辑页不代表取消任务。导出结束核对输出存在、可读和可播放；不可播放时如实记录未覆盖项。透明层使用支持 alpha 的编码并实查合成，不能因为传了 `--alpha` 就宣称成功。按交付检查乱序 seek、首帧参数、跨画幅与帧率、事件和声音同步；只有实际运行过的平台才计入跨平台验收。
 
+### 带版本与时间点的审片
+
+用审片入口取得可追溯的观察材料，再按本次目标选择必要图片实际查看。`current-project` 是当前工程的预览求帧；`export-job` 是指定已完成 job 的原编码输出解码，不重新导出。前者不能证明编码后的画面、帧率、透明或音频效果，后者也不代表当前工程已包含旧导出之后的编辑。用户要求判断交付成片时，选择对应已完成导出；要定位尚未导出的修改时，可以查看当前工程预览，并明确两者来源。
+
+安装版本提供 `review` 后，沿同一服务和项目调用。例如观察现工程的指定时间点与末帧，或读取 `jobs` 返回的真实已完成 `JOB_ID` 对应的编码输出：
+
+```bash
+node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$PROJECT" --source current-project --times 0,2.5 --last --max-edge 1280 --home "$APP_HOME"
+node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$PROJECT" --source export-job --job "$JOB_ID" --times 0,2.5 --last --max-edge 1280 --home "$APP_HOME"
+```
+
+时间点按本次问题选择，不盲目复用示例。`--times` 与 `--count` 互斥，`--last` 可以附加末帧，合计最多 6 帧；需要更多观察时先选本次必要范围，不绕过预算。来源、参数和错误以安装版 `--help` 及真实回执为准；旧版没有入口时说明能力缺口，不拿普通 `check` 图片冒称已取得版本化编码帧。
+
+已经通过现有授权接入应用 MCP 时，可使用 `video_review`，其请求字段为 `source`、可选 `job`、`times`、`last`、`count`、`maxEdge`；同样不改变项目或自动读取图片。不要为审片另行注册 MCP 服务或放宽工具权限。
+
+回执以 `reviewId`、`createdAt`、`sourceKind`、`filmRevision`、`source` 和 `frames` 绑定观察对象；`observation: "generated-not-viewed"` 只说明观察材料已生成，路径、URL、联系表或摘要也不是模型已经看过画面的证明。每帧的 `requestedTime` 是请求秒数或 `"last"`。当前工程按工程时间求帧，`timeBasis: "project-seek"`、`actualPTS: null`，末态是 `duration` 前 1ms 的预览，不是编码尾帧。
+
+编码来源的 `times`、`requestedTime` 和 `actualTime` 以首个真实解码视频帧为相对零点；顶层 `timeOrigin: "first-decoded-video-frame"`、`timeOriginPTS` 记录这个起点。`timeBasis: "encoded-pts"`、原始秒值 `actualPTS`、整数刻度字符串 `actualPTSTicks`、`ptsTimeBase` 和 `frameIndex` 绑定实际编码帧；选择相对时间不早于请求的第一帧，不能把请求秒数当成原始 PTS。`encodedRange.firstPTS/lastPTS` 是原始 PTS 范围，`durationOrigin: "container-format-metadata"` 的 `duration` 仅是容器元数据，不是选帧上界。末帧策略是 `last-decoded-video-frame-pts`；请求时间后没有帧时会明确失败，不假装精确命中。此时钟不承诺复现任意播放器的编辑列表时钟；`source.output.outputTimeToFilmTime: null` 表示没有输出到原工程的隐式时间映射，range/clip 导出的相对第 2 秒不能直接称为原 film 第 2 秒，也不能把末帧称为影片结束后的一帧。
+
+`filmRevision` 仅是时间线版本，场景与资源边界另看 `source.inputs`。当前工程的输入摘要来自本次冻结的静态本地依赖，并前后核对当前工程；远端资源、动态依赖和浏览器/字体环境不在该摘要内，不证明整个运行环境原子冻结。导出来源的 `source.inputs` 来自原 job 的输入清单；新清单 `files` 的逐项 SHA-256 来自提交时同次冻结副本，旧清单可能只有路径/字节数，缺失摘要保持未知，不能从当前场景补称为导出时的 SHA-256。`source.output.sha256` 的 `digestOrigin: "observed-at-review"` 是本次审片观察到的原输出字节摘要，`exportCompletionDigest: null` 不能说成已核导出完成时摘要。回执摘要用于核对所读图片和来源，不能代替图像内容。
+
+每帧回执包含 `path`、`bytes` 和 `sha256`。通过现有 `Read` 查看所选帧时，`file_path` 使用该帧实际返回的 `path`，`expected_sha256` 使用同一帧返回的完整 64 位小写十六进制 `sha256`；不要自行拼路径、只复制哈希前缀或使用另一帧的摘要。平台核对同次实际读到的原始图片字节，再沿既有视觉处理与图片预算展示；后续缩放或转换不把原始摘要改称模型所见像素的摘要。摘要不匹配的 `IMAGE_DIGEST_MISMATCH` 返回失败且不提供图片或发起视觉能力请求，此次不能记作已看，重新核对来源后再决定是否重取观察材料。Smart 非视觉主模型沿既有路由取得受控视觉能力反馈时，明确依据该反馈判断，不声称主导演模型直接收到了像素，也不据能力请求附图声称上游已接纳或理解；没有该入口时按返回的“未发起视觉能力请求”报告观察缺口。
+
+来源在审片期间变化的 `stale`、`digest-mismatch`、`job-not-complete`、`over-budget` 等错误都按真实回执处理；未完成、非视频或缺少输入版本的导出不能审成片，不自动退回当前工程冒充。审片只生成只读材料，不修改影片、人工锁或已有导出；修订仍走原有领域操作与授权。
+
+只读取当前判断需要的帧，遵守平台现有图片预算与访问授权。不要把 base64 塞进选区、手写模型请求、切换 Provider 或修改权限来绕过现有视觉路线。文件缺失、摘要不符、观察过时、工具不可用、预算不足或固定模型没有视觉能力时，说明未完成哪一项观察；不能用源码推断、工具退出码或图片已经进入请求声称模型理解了画面。有可观测上游接纳或拒绝时分别报告；没有该证据就不假定。
+
+根据真实可见内容给出判断，并联系具体来源与时间点说明修改理由。导演仍自主选择构件、组合、原创场景、是否修订以及合适的验证范围；审片不强制三镜头、固定节奏、旁白、字幕或统一审美流程。静默可以是创作意图，图片不能证明声音有无或听感。修改前重读当前 revision、人工参数、DOM `overrides` 和锁，只更新需要的对象；只有用户明确要求解锁时才沿前述正式解锁入口操作，不能通过源码写入覆盖已锁参数。改后重新取得相应新版本的观察材料核对变化，旧导出与旧审片保留原版本，不以新参数重标旧画面。
+
 ## 风格与素材能力
 
 ### MiMo 预置语音
