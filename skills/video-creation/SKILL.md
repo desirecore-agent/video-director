@@ -205,7 +205,7 @@ node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$P
 
 时间点按本次问题选择，不盲目复用示例。`--times` 与 `--count` 互斥，`--last` 可以附加末帧，合计最多 6 帧；需要更多观察时先选本次必要范围，不绕过预算。来源、参数和错误以安装版 `--help` 及真实回执为准；旧版没有入口时说明能力缺口，不拿普通 `check` 图片冒称已取得版本化编码帧。
 
-已经通过现有授权接入应用 MCP 时，可使用 `video_review`，其请求字段为 `source`、可选 `job`、`times`、`last`、`count`、`maxEdge`；同样不改变项目或自动读取图片。不要为审片另行注册 MCP 服务或放宽工具权限。
+已经通过现有授权接入应用 MCP 时，可使用 `video_review`，它沿安装版本公开的同源请求 Schema；同样不改变项目或自动读取图片。不要为审片另行注册 MCP 服务或放宽工具权限。
 
 回执以 `reviewId`、`createdAt`、`sourceKind`、`filmRevision`、`source` 和 `frames` 绑定观察对象；`observation: "generated-not-viewed"` 只说明观察材料已生成，路径、URL、联系表或摘要也不是模型已经看过画面的证明。每帧的 `requestedTime` 是请求秒数或 `"last"`。当前工程按工程时间求帧，`timeBasis: "project-seek"`、`actualPTS: null`，末态是 `duration` 前 1ms 的预览，不是编码尾帧。
 
@@ -220,6 +220,31 @@ node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$P
 只读取当前判断需要的帧，遵守平台现有图片预算与访问授权。不要把 base64 塞进选区、手写模型请求、切换 Provider 或修改权限来绕过现有视觉路线。文件缺失、摘要不符、观察过时、工具不可用、预算不足或固定模型没有视觉能力时，说明未完成哪一项观察；不能用源码推断、工具退出码或图片已经进入请求声称模型理解了画面。有可观测上游接纳或拒绝时分别报告；没有该证据就不假定。
 
 根据真实可见内容给出判断，并联系具体来源与时间点说明修改理由。导演仍自主选择构件、组合、原创场景、是否修订以及合适的验证范围；审片不强制三镜头、固定节奏、旁白、字幕或统一审美流程。静默可以是创作意图，图片不能证明声音有无或听感。修改前重读当前 revision、人工参数、DOM `overrides` 和锁，只更新需要的对象；只有用户明确要求解锁时才沿前述正式解锁入口操作，不能通过源码写入覆盖已锁参数。改后重新取得相应新版本的观察材料核对变化，旧导出与旧审片保留原版本，不以新参数重标旧画面。
+
+### 按用途判断与选择观察
+
+从用户请求和已有工程上下文判断作品交给谁、在哪里看、主要信息是什么、实际观看尺寸、是否需要声音，以及期望怎样结束。缺少非关键细节时可说明合理假设继续推进，只有会实质改变结果的选择才澄清；这不是必填问卷。开场可以先给信息或先营造氛围，结尾可以硬切、停留、淡出或循环，不设统一秒数或镜头数量，也不因做质量检查而把原创 HTML／SVG／Canvas／WebGL 收窄为模板。
+
+安装版提供 P1 合同时，先用离线 `review --schema` 查看它返回的 `contractVersion`、`requestSchema`、`findingSchema` 与 `artifactSchema`；MCP `video_review` 使用同一请求 Schema，不在本技能维护另一份字段表。以下例子只为已完成 job 选择首尾和手机宽度观察，不重新导出，宽度仍按本次交付选择：
+
+```bash
+node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review --schema
+node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$PROJECT" --source export-job --job "$JOB_ID" --first-last --target-width 390 --max-edge 1280 --home "$APP_HOME"
+```
+
+`--target-width` 对应请求的 `targetWidth`，`--first-last` 对应 `firstLast: true`。未给 `times`／`count` 时，首尾请求只选择明确首点 0 与末帧，不额外取默认采样；timed `frames` 仍合计最多 6 帧，`artifacts` 单列至多 1 张首尾组合图，不当作第七个时间帧。每张 PNG 至多 4MiB、帧与组合图合计至多 12MiB，遵守真实失败回执，不分拆请求绕预算。旧安装没有合同或选项时报告缺口，不把旧输出当作 P1 已执行。
+
+安装版检查提供 `findings` 时，读取它实际返回的 `source`、`time`、`selector`、`bounds`、`measurement`、`evidence` 和 `limitations`，结合 `coverage` 说明实际观察范围，不从日志文字猜出一份报告。`ok` 与原有 `lines`、`files` 仍分别按原合同解释；技术检查通过不等于作品表达充分，提示的数量或级别不自动决定可否导出、是否应修订或 Task 是否完成。无 finding、未执行和不能测准都不当通过；Canvas／WebGL、复杂变换、复杂背景等应保留返回的 `unknown`。例如 DOM 没有裁切不证明小屏文字可读，也不证明对比度足够。
+
+DOM 字体、边界、重叠和 override 目标测量只归返回的 `source.kind`、实际采样时间与视口：`current-project` 按该 review 的冻结输入和限制说明；普通 `check` 的 `live-check`／`live-files-unfenced` 没有源版本 fence，不能补称冻结，也不能补造 `filmRevision` 或输入摘要。同次采样窗口不是 DOM 与像素的原子快照。不能因 `filmRevision` 相同，就把当前 DOM 结论贴到旧 `export-job` 的编码帧上。需要两种材料时分别引用，编码帧的可见判断来自实际读取的图片，DOM 测量用于定位其自身工程源的问题。
+
+判断小屏阅读时，实际读取目标宽度材料并核对它自己的摘要和实际尺寸；它是整帧的缩小观察，不是假设发生了新的响应式排版。每帧 `presentation` 区分请求宽度与受原帧、`maxEdge` 等上界限制后的实际尺寸和 `limitedBy`，不放大原图，不能把未达到的尺寸称为已按要求观察。组合图的整图尺寸与 `layout.cells` 的实际尺寸／缩放分别读；其 `derivedFrom` 指向同次原帧，组合图自身的 `path`／`sha256` 才用于此次 `Read` 的 `file_path`／`expected_sha256`，不能误用某个源帧摘要。它仍是 `generated-not-viewed` 的材料，生成不等于已看。必要文字、主体和装饰信息的职责不同，不设全局最低字号，不只凭源码字号或未缩小截图下结论。
+
+观察首尾时引用同一准确来源和版本的首帧、末帧与各自时间；`export-job` 沿前述真实 PTS 选择实际编码尾帧，不自行用 `duration - 0.04` 或 duration×fps 猜测；`current-project` 仍是工程求帧与末态预览，不改称编码尾帧。组合图的 `timeBasis: "composite-not-timed-frame"` 不代表单一采样时间，每个 cell 的时间归其 `derivedFrom` 原帧；首尾指向同一实际帧时也不伪称两次不同时间观察。静帧可以说明构图与结束状态，不能证明连续节奏、声音连续性或无缝循环；硬切也可以符合意图。若问题是循环接缝、动作节奏或音画同步，再按已有授权选择实际片段或听觉观察，并如实报告覆盖范围。
+
+无音轨是媒体事实，有意静默由任务或创作上下文确认；不能从一次音频读取失败推断作者选择了静默。静默作品不自动补旁白、音乐或新 Provider。图像、转写和波形都不能代替实际听感；没有听取证据时不宣称混音、响度或同步通过。
+
+给用户的判断联系具体可见现象、准确源／版本／实际时间、交付用途和仍未知的部分，再说明是否值得修改以及希望改变什么。例如“该版本 5 秒画面的光束压过主标题，对手机阅读不利，拟减弱未锁定背景”，而不是只说“质量不佳”；例子不是每部影片的固定步骤。可以判断现片已符合意图而不改、不重导出。若建议触及人工锁，保留为建议或选择未锁定替代方案；不能清空 overrides／locks、重插片段或直接重写时间线消除提示。实际修订继续重读最新工程并使用前述领域合同，保留自主创作与人工改动。
 
 ## 风格与素材能力
 
