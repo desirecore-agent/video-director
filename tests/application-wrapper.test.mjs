@@ -65,12 +65,36 @@ test('动效参数文件和精确 revision 原样送达安装应用', (t) => {
   assert.deepEqual(JSON.parse(result.stdout), { args, cwd: root });
 });
 
+test('公开patch帮助与机器合同原样传递，不补项目或home参数', (t) => {
+  const { root, app } = fixture(t);
+  for (const args of [['patch', '--help'], ['patch', '--schema']]) {
+    const result = spawnSync(process.execPath, [wrapper, '--app-root', app, ...args], { cwd: root, encoding: 'utf8' });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout.trim().split('\n').length, 1);
+    assert.deepEqual(JSON.parse(result.stdout), { args, cwd: root });
+  }
+});
+
 test('完整导出参数不被包装器降级或改写', (t) => {
   const { root, app } = fixture(t);
   const args = ['render', '项目', '--codec', 'prores4444', '--alpha', '--fps', '30000/1001', '--quality', 'master', '--frame', '9:16', '--fill', 'contain', '--width', '1080', '--height', '1920', '--range', '0-3.5', '--clip', 'clip-a', '--scale', '1', '--samples', '8', '--shutter', '0.5', '--no-audio', '--no-hardware', '--burn-subtitles', '--sidecar', 'vtt', '--output', '透明 输出', '--wait', '--timeout', '120'];
   const result = spawnSync(process.execPath, [wrapper, '--app-root', app, ...args], { cwd: root, encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr);
   assert.deepEqual(JSON.parse(result.stdout), { args, cwd: root });
+});
+
+test('审片来源、已完成任务与时间点沿已安装CLI逐字传递，不隐式渲染', (t) => {
+  const { root, app } = fixture(t);
+  const examples = [
+    ['review', '项目 含空格', '--source', 'current-project', '--times', '0,2.5', '--last', '--max-edge', '1280', '--home', '隔离 home'],
+    ['review', '项目 含空格', '--source', 'export-job', '--job', '已完成-job-原版本', '--count', '4', '--last', '--max-edge', '1280', '--home', '隔离 home'],
+  ];
+  for (const args of examples) {
+    const result = spawnSync(process.execPath, [wrapper, '--app-root', app, ...args], { cwd: root, encoding: 'utf8' });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout.trim().split('\n').length, 1);
+    assert.deepEqual(JSON.parse(result.stdout), { args, cwd: root });
+  }
 });
 
 test('MiMo素材生成沿已安装CLI，JSON路径和明确服务模型逐字保留且不带凭据', (t) => {
