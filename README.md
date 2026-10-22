@@ -31,6 +31,8 @@ node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用
 
 已有受管服务只复用，不重复 `start` 或重新注册。确需启动且已确认没有该 home 的运行实例时，再按安装版本的运行合同使用 `start`，指定应用自己的 `--home` 与 `--project`；其余命令连接同一个应用 home 的已运行服务。渲染提交成功不等于渲染完成；导演需根据 job 回执核对输出，实际查看/播放后才报告对应验证。
 
+操作字段不明确时，包装器的 `patch --help` 可发现 `patch --schema`：它无需服务、项目或 home 就返回安装版本的只读 Draft-07 操作合同，MCP `video_patch` 使用同源 Schema。导演按公开合同与真实 `inspect` 修改，不需要扫描安装材料源码。`RUNTIME.md` 不在读域时明确记录缺口；已知正式服务和同一实例的实际 home 仍可按现有授权使用公开帮助与合同，不绕过文件范围或猜测启动。最小换源示例及人工锁保留要求见[主技能的修改与冲突](skills/video-creation/SKILL.md#修改与冲突)。
+
 `review` 可为当前工程预览或指定已完成 job 的原编码输出生成带版本、时间点和文件摘要的观察材料；两种来源分别报告，不将预览冒充编码帧。生成回执不代表已经看过：导演需按摘要实际读取必要图片，依据可见内容说明判断和修订理由。无法读取、超出图片预算或本次模型没有视觉能力时明确报告观察缺口，保留自主创作、人工参数、DOM 覆盖和锁。精确来源、时间点和读取方法见[主技能的审片入口](skills/video-creation/SKILL.md#带版本与时间点的审片)。
 
 已授权并连接 MiMo 后，可用 `get <项目> tts --args <无凭据JSON文件> --via mimo --model mimo-v2.5-tts --home <应用数据目录>` 制作自然口语旁白，沿同一服务保存 WAV。默认使用普通 API；Token Plan 需要安装者显式配置匹配的 `MIMO_API_BASE_URL`，不能与普通 API Key 混用或充当产品通用后端。Key 保留在现有应用凭据机制或服务环境，不能进入工程或 ZIP。MiMo 无词级时间戳，字幕需按真实新音轨对齐；回执未知时不盲目重复付费调用。参数、预置音色与执行边界见[主技能的 MiMo 语音说明](skills/video-creation/SKILL.md#mimo-预置语音)。
