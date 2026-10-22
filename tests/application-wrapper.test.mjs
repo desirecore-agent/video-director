@@ -111,6 +111,22 @@ test('P1公开审片合同与目标宽度首尾参数原样传递，不补默认
   }
 });
 
+test('P2场景合同发现与明确源码参数文件沿安装CLI原样传递', (t) => {
+  const { root, app } = fixture(t);
+  const examples = [
+    ['scene-read', '--schema'],
+    ['scene-revise', '--schema'],
+    ['scene-read', '共享 场景项目', '真实-clip-id', '--home', '隔离 home'],
+    ['scene-revise', '共享 场景项目', '--args', '完整 新版本参数.json', '--home', '隔离 home'],
+  ];
+  for (const args of examples) {
+    const result = spawnSync(process.execPath, [wrapper, '--app-root', app, ...args], { cwd: root, encoding: 'utf8' });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout.trim().split('\n').length, 1);
+    assert.deepEqual(JSON.parse(result.stdout), { args, cwd: root });
+  }
+});
+
 test('MiMo素材生成沿已安装CLI，JSON路径和明确服务模型逐字保留且不带凭据', (t) => {
   const { root, app } = fixture(t);
   const args = ['get', '创业 视频', 'tts', '--args', '语音 参数.json', '--via', 'mimo', '--model', 'mimo-v2.5-tts', '--home', '隔离 应用数据'];

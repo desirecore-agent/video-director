@@ -25,13 +25,15 @@ node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用
 node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用目录> inspect <项目目录> --home <同一安装的应用数据目录>
 ```
 
-它直接调用 `<应用目录>/desirecore/cli.mjs`，保留参数、退出码和原工作目录，不通过 shell、不下载官方原版、不请求模型。应用领域 CLI 提供 `start`、`inspect`、`patch`、`motion-catalog`、`motion-inspect`、`motion-install`、`motion-take`、`motion-patch`、`check`、`review`、`get`、`render` 与渲染任务查询/重试/取消；`motion-install` 复制应用自带的本地 SDK，`motion-take` 通过现有 Saved 依赖闭包取用内置构件，是否插入时间线由导演决定；`motion-patch` 沿用真实 revision 与锁保护；渲染可传完整编码、alpha、画幅、帧率和质量参数。包装器可用 `--` 分隔应用定位选项与领域参数。精确参数以安装版本的 `--help` 和 [主技能](skills/video-creation/SKILL.md) 为准。
+它直接调用 `<应用目录>/desirecore/cli.mjs`，保留参数、退出码和原工作目录，不通过 shell、不下载官方原版、不请求模型。应用领域 CLI 提供 `start`、`inspect`、`patch`、`scene-read`、`scene-revise`、`motion-catalog`、`motion-inspect`、`motion-install`、`motion-take`、`motion-patch`、`check`、`review`、`get`、`render` 与渲染任务查询/重试/取消；`motion-install` 复制应用自带的本地 SDK，`motion-take` 通过现有 Saved 依赖闭包取用内置构件，是否插入时间线由导演决定；`motion-patch` 沿用真实 revision 与锁保护；渲染可传完整编码、alpha、画幅、帧率和质量参数。包装器可用 `--` 分隔应用定位选项与领域参数。精确参数以安装版本的 `--help` 和 [主技能](skills/video-creation/SKILL.md) 为准。
 
 受管安装发现的准确调用与缺省处理见[主技能](skills/video-creation/SKILL.md)：`get` 返回的 `app.instanceId` 用作 `release_history` 的 `installation_id`，后者的 `current.materialRoot` 与顶层可选 `currentData.dataRoot` 分别用于 `--app-root` 与 `--home`。这些路径不增加访问权限，也不证明服务正在运行；入口关联或应用工作请求不自动向 Bash 注入环境变量。缺少摘要时仅使用安装者明确提供的路径，不从历史版本、运行绑定或平台账本推算。
 
 已有受管服务只复用，不重复 `start` 或重新注册。确需启动且已确认没有该 home 的运行实例时，再按安装版本的运行合同使用 `start`，指定应用自己的 `--home` 与 `--project`；其余命令连接同一个应用 home 的已运行服务。渲染提交成功不等于渲染完成；导演需根据 job 回执核对输出，实际查看/播放后才报告对应验证。
 
 操作字段不明确时，包装器的 `patch --help` 可发现 `patch --schema`：它无需服务、项目或 home 就返回安装版本的只读 Draft-07 操作合同，MCP `video_patch` 使用同源 Schema。导演按公开合同与真实 `inspect` 修改，不需要扫描安装材料源码。`RUNTIME.md` 不在读域时明确记录缺口；已知正式服务和同一实例的实际 home 仍可按现有授权使用公开帮助与合同，不绕过文件范围或猜测启动。最小换源示例及人工锁保留要求见[主技能的修改与冲突](skills/video-creation/SKILL.md#修改与冲突)。
+
+修改已引用的本地场景可使用 `scene-read` 的同 Buffer 原字节摘要与 `scene-revise --args` 的严格影片基线，完整发布新版本后只切换选定共享实例，保留原源码、非 src 字段和人工锁；两命令的 `--schema` 离线发现同源合同。省略全文不是已读全文，发布后失败或回执未知须先检查实际映射，不自动删新文件或重发。它不承诺操作系统 CAS、两文件事务或任意新代码遵守人工参数的语义，详见[主技能的源码修订](skills/video-creation/SKILL.md#场景原字节与新版本修订)。
 
 `review` 可为当前工程预览或指定已完成 job 的原编码输出生成带版本、时间点和文件摘要的观察材料；两种来源分别报告，不将预览冒充编码帧。生成回执不代表已经看过：导演需按摘要实际读取必要图片，依据可见内容说明判断和修订理由。无法读取、超出图片预算或本次模型没有视觉能力时明确报告观察缺口，保留自主创作、人工参数、DOM 覆盖和锁。精确来源、时间点和读取方法见[主技能的审片入口](skills/video-creation/SKILL.md#带版本与时间点的审片)。
 
