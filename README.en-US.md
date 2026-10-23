@@ -73,3 +73,9 @@ Review content through branch pull requests. Market publication requires its nor
 ## Attribution
 
 The film manual, format specification and creative skills directly reuse MIT-licensed OpenFilm content. See [NOTICE](NOTICE) and the [preserved upstream license](licenses/OpenFilm-MIT.txt) for exact commits and adaptations. Unchanged originals are provenance references; their official CLI and download instructions are superseded by the application integration. Overlay Studio is referenced only for component-organization ideas. Its restricted code, skills, templates and assets are not copied; general-motion integration and skill extensions are independently implemented. The independent application is named 视频创作 and the Agent 视频导演, without affiliation or endorsement from OpenFilm.
+
+## Time-window and small-size review
+
+When the installed app exposes review v3, the Director can choose a sequence window or a same-capture compareWidths artifact for the intended delivery. Actual cell times/sizes, source digests and limits come from the app's single Schema. Encoded low-resolution full-frame activity, sparse contact cells and partial project seeks remain separate evidence, not pace scores or continuous-playback certification. Read the actual composite and cite its source and observations while preserving original HTML/SVG/Canvas/WebGL creation, human locks and sources. Do not impose a universal title deadline or font threshold, automatically cut the film, or remove locks. See the main skill's time-window and same-capture comparison section.
+
+Sheets use separate label bands and larger cells, explicitly reporting labels simplified or omitted in tiny cells. Metadata retains full times and integer PTS. The maximum-luma-delta adjacent pair supplies actual PTS locators without an aesthetic verdict.
