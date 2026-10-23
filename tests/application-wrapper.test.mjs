@@ -127,6 +127,18 @@ test('P2场景合同发现与明确源码参数文件沿安装CLI原样传递', 
   }
 });
 
+test('T3序列时间窗和同源多尺寸参数原样传递，不补导出或改锁动作', (t) => {
+  const { root, app } = fixture(t);
+  const examples = [
+    ['review', '潮光 项目', '--source', 'export-job', '--job', '真实-job', '--times', '0', '--sequence-start', '0', '--sequence-end', '8', '--sequence-count', '16', '--home', '隔离 home'],
+    ['review', '潮光 项目', '--source', 'current-project', '--times', '5', '--compare-widths', '180,360,720', '--compare-frame', '0', '--max-edge', '1280'],
+  ];
+  for (const args of examples) {
+    const r = spawnSync(process.execPath, [wrapper, '--app-root', app, ...args], { cwd: root, encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr); assert.deepEqual(JSON.parse(r.stdout), { args, cwd: root });
+  }
+});
+
 test('MiMo素材生成沿已安装CLI，JSON路径和明确服务模型逐字保留且不带凭据', (t) => {
   const { root, app } = fixture(t);
   const args = ['get', '创业 视频', 'tts', '--args', '语音 参数.json', '--via', 'mimo', '--model', 'mimo-v2.5-tts', '--home', '隔离 应用数据'];
