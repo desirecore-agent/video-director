@@ -278,9 +278,11 @@ node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$P
 node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$PROJECT" --source current-project --times 5 --compare-widths 180,360,720 --compare-frame 0 --max-edge 1280 --home "$APP_HOME"
 ```
 
-`sequence:{start,end,count}` 的时间窗为 `[start,end)`，长度0.001至30秒、8–24格；编码窗最多1800真实帧，超出明确失败，应依据问题选择更短窗口。不是自动把所有影片切成固定段。原timed `frames`仍最多6，新增一张`sequence-contact-sheet`在`artifacts`中；它与`firstLast`、`compareWidths`互斥，总图片仍12MiB/每图4MiB。按`layout.cells`从左到右、从上到下逐格关联`actualTime`，再核`derivedFrom`的实际PTS/整数时间基/原捕获摘要；图内不烧录时间标签。VFR低帧率可能多个格引用同一真实帧，格数不是唯一帧数，不能伪称观察了更多变化。
+`sequence:{start,end,count}` 的时间窗为 `[start,end)`，长度0.001至30秒、8–24格；编码窗最多1800真实帧，超出明确失败，应依据问题选择更短窗口。不是自动把所有影片切成固定段。原timed `frames`仍最多6，新增一张`sequence-contact-sheet`在`artifacts`中；它与`firstLast`、`compareWidths`互斥，总图片仍12MiB/每图4MiB。按`layout.cells`从左到右、从上到下逐格关联`actualTime`，再核`derivedFrom`的实际PTS/整数时间基/原捕获摘要；图内独立标签带显示格号及3位小数秒，尺寸对照显示请求>实际px，源画面不被标签覆盖；小格可能简化或省略，完整PTS和时间仍以metadata为准。VFR低帧率可能多个格引用同一真实帧，格数不是唯一帧数，不能伪称观察了更多变化。
 
 编码来源的`temporal`明确分析该窗全部实际帧的低分辨率灰度差、数量、时隙和原始时间基，`decodedFrames`与格数分列；这不是物体运动、语义节奏、冻结故障、闪烁安全或音频听感判定。`firstActualTime`/`lastActualTime`是实际覆盖，不用请求end冒称尾部已测。当前工程的序列只做离散seek，`status:partial`，没有全帧灰度结论；完整区间的语义仍结合真实画面与用途判断。不要把首尾或几格静帧称为完整连续播放。
+
+活动定位可读`temporal.windows[].peakAdjacentPair`的前/后实际帧、整数PTS和时间基；平局取首对，按后帧落入请求起点的秒桶，可能跨桶。它是低分辨率灰度差定位，不是语义事件、物体速度或节奏好坏的自动判断。目录准入仍按当前权限和精确review叶目录处理，不要求预授权整个材料根。
 
 `compareWidths`提供2–3个唯一宽度64–4096，`compareFrame`指本回执timed frame index（默认0），不是编码源frameIndex。尺寸对照从同一次target缩小前的捕获Buffer派生，`derivedFrom.captureSha256`与`publishedFrameSha256`可能不同，不能替换使用；实际读取用组合图自己的path和sha256。每格的requestedWidth、实际width/height/scale和limitedBy分列，不放大源、不把整图cap后缩小的格子仍称为请求宽度。`textProjections`仅同次DOM轴对齐字号投影，SVG/复杂变换仍null，encoded为空；它不识别字形、背景对比度或证明逐字可读。各宽度是同一布局缩小，不是响应式重排。
 
