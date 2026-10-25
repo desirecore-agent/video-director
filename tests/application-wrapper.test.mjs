@@ -127,6 +127,13 @@ test('P2场景合同发现与明确源码参数文件沿安装CLI原样传递', 
   }
 });
 
+test('T4已有材料的前后对照参数逐字透传，不新增渲染或权限动作', (t) => {
+  const { root, app } = fixture(t);
+  const args = ['review', '潮光 项目', '--source', 'review-pair', '--before-review', 'a'.repeat(24), '--before-frame', '0', '--after-review', 'b'.repeat(24), '--after-frame', '1', '--target-width', '360', '--home', '隔离 home'];
+  const r = spawnSync(process.execPath, [wrapper, '--app-root', app, ...args], { cwd: root, encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stderr); assert.deepEqual(JSON.parse(r.stdout), { args, cwd: root });
+});
+
 test('T3序列时间窗和同源多尺寸参数原样传递，不补导出或改锁动作', (t) => {
   const { root, app } = fixture(t);
   const examples = [
