@@ -81,3 +81,5 @@ When the installed app exposes review v3, the Director can choose a sequence win
 Sheets use separate label bands and larger cells, explicitly reporting labels simplified or omitted in tiny cells. Metadata retains full times and integer PTS. The maximum-luma-delta adjacent pair supplies actual PTS locators without an aesthetic verdict.
 
 Review v4 adds optional viewing intent, version-bound navigation with save/input checks, and review-pair comparisons of existing timed frames. Missing legacy time mappings or captured fields remain unknown. Image enlargement adds no pixels; there is no automatic layout, unlocking or quality verdict.
+
+The existing wrapper forwards optional `review --read <ID> --copy-to <authorized-workdir>` to reuse saved PNGs for Read without another capture or permission grant. Receipt identity establishes generation history; current workdir lists and intent-only edits do not establish pixel changes.
