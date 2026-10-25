@@ -271,7 +271,7 @@ DOM 字体、边界、重叠和 override 目标测量只归返回的 `source.kin
 
 ### 时间窗总览与同捕获多尺寸观察
 
-安装版 `review --schema` 提供 v3 时，可按本次需要选择 `sequence` 或 `compareWidths`，无需每次都运行。仍走原 `review` / `video_review`，不另开渲染器、任务系统或视觉 Provider。例如对明确的8秒成片窗口和某个稳定时点观察：
+安装版 `review --schema` 提供 v3 或更新合同时，可按本次需要选择 `sequence` 或 `compareWidths`，无需每次都运行。仍走原 `review` / `video_review`，不另开渲染器、任务系统或视觉 Provider。例如对明确的8秒成片窗口和某个稳定时点观察：
 
 ```bash
 node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$PROJECT" --source export-job --job "$JOB_ID" --times 0 --sequence-start 0 --sequence-end 8 --sequence-count 16 --max-edge 1280 --home "$APP_HOME"
@@ -287,6 +287,21 @@ node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$P
 `compareWidths`提供2–3个唯一宽度64–4096，`compareFrame`指本回执timed frame index（默认0），不是编码源frameIndex。尺寸对照从同一次target缩小前的捕获Buffer派生，`derivedFrom.captureSha256`与`publishedFrameSha256`可能不同，不能替换使用；实际读取用组合图自己的path和sha256。每格的requestedWidth、实际width/height/scale和limitedBy分列，不放大源、不把整图cap后缩小的格子仍称为请求宽度。`textProjections`仅同次DOM轴对齐字号投影，SVG/复杂变换仍null，encoded为空；它不识别字形、背景对比度或证明逐字可读。各宽度是同一布局缩小，不是响应式重排。
 
 指出开场信息何时出现、哪段变化缓慢或小字无法辨认时，引用准确版本/窗口/格时点/实际观看宽度并区分测量与判断；不设统一“几秒必须出现标题”或最低字号。人工锁和DOM overrides照旧保留，涉及这些对象的优化保持建议或选择未锁定替代方案，不通过源码改写绕锁。
+
+
+### 可选观看意图、同版本定位与前后对照
+
+安装版review --schema提供v4时，可读取intentSchema、sourceFactsSchema和navigation说明。片段attrs.data-review-intent是可选JSON，描述targetWidths及text的信息角色essential/supporting/decorative、selector和description、note。它给出用途而不自动排版；不标注不等于可删除，Canvas/WebGL可以只写语义说明。先读现有工程及人工params/overrides/locks，需要标注时沿原patch只改必要attrs，并合并其他原属性；锁仍读原字段，不创建第二套锁，不绕锁写文件。
+
+工程审片入口可点总览格、放大已生成图片并播放同一历史成片；放大不增加源像素。回当前工程必须来源输入仍匹配、没有未保存内容且时间映射可证明。新整片/线性range可有outputTimeToFilmTime，clip/旧任务缺映射仍unknown，不根据duration或相同filmRevision猜。编码整数起点缺失或浏览器非零起点语义未证明时不自动设播放时点，仍可看准确原图。
+
+有两份已有timed材料时，可按需要组合：
+
+```bash
+node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$PROJECT" --source review-pair --before-review "$BEFORE_REVIEW" --before-frame 0 --after-review "$AFTER_REVIEW" --after-frame 0 --target-width 360 --home "$APP_HOME"
+```
+
+先明确选择两边实际时点；相同秒数不自动代表同一语义事件。回执每侧源/版本/timeBasis/PTS/尺寸/原SHA独立，v4的frames为空，实际Read单artifact自身path/SHA。旧小图只缩小，不放大伪称新宽度。differences只列可证明的输入集合和已捕获参数/DOM/锁/布局字段摘要；缺数据标unknown，输入集合移出不表示删除原文件，不能识别是谁修改或自动评分。数据相同不证明新代码仍使用参数，实际看图与必要检查仍要做。保留自由HTML/SVG/Canvas/WebGL和人工锁，由导演决定是否值得修片；没有必要就不重渲染或导出。
 
 ## 风格与素材能力
 
