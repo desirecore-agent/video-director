@@ -289,6 +289,18 @@ node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$P
 指出开场信息何时出现、哪段变化缓慢或小字无法辨认时，引用准确版本/窗口/格时点/实际观看宽度并区分测量与判断；不设统一“几秒必须出现标题”或最低字号。人工锁和DOM overrides照旧保留，涉及这些对象的优化保持建议或选择未锁定替代方案，不通过源码改写绕锁。
 
 
+### 已有审片与可选工作目录副本
+
+安装版`review --schema`提供`cliOptionsSchema`时，可按需要选择本地`--copy-to`，让已核验PNG落在自己已有、已授权的工作目录，再用原Read携完整SHA读取。此选项不是HTTP/MCP参数，不授予权限；也可继续按需登记原精确叶目录，不强制所有任务走一种路线。
+
+```sh
+node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$PROJECT" --read "$REVIEW_ID" --copy-to "$WORKDIR" --home "$APP_HOME"
+```
+
+`--read`读取原review而不重新捕获，不混用source/job/采样参数；新捕获也可选`--copy-to`。从CLI的`localCopies.images`读取副本path/bytes/sha256及源标识；不要猜目录、用某源帧摘要代组合图摘要或跳过实际Read。匹配副本可复用，冲突不覆盖；失败用原ID的`--read`恢复，不为复制失败重新渲染。
+
+每次捕获新随机reviewId；读取/复制同一已有回执才复用ID。当前工作目录列表是授权快照，不是会话开始时的生成历史，不能据此宣称同参覆盖。来源按生成调用、reviewId、createdAt、版本和SHA核验。信息角色是用途说明；平台不会据此自动排版。只改标注不构成字号、布局或可读性改善的证据，改善要靠实际变更后的新图，不假定任意场景代码如何消费元数据。
+
 ### 可选观看意图、同版本定位与前后对照
 
 安装版review --schema提供v4时，可读取intentSchema、sourceFactsSchema和navigation说明。片段attrs.data-review-intent是可选JSON，描述targetWidths及text的信息角色essential/supporting/decorative、selector和description、note。它给出用途而不自动排版；不标注不等于可删除，Canvas/WebGL可以只写语义说明。先读现有工程及人工params/overrides/locks，需要标注时沿原patch只改必要attrs，并合并其他原属性；锁仍读原字段，不创建第二套锁，不绕锁写文件。

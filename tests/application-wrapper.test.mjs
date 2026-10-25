@@ -193,3 +193,10 @@ test('标准输入导入包装器不执行入口，也不把不存在的 argv �
   assert.equal(result.status, 0, result.stderr);
   assert.equal(result.stdout, '');
 });
+
+test('existing review copy flags are forwarded without shell expansion or another capture', (t) => {
+  const { root, app } = fixture(t);
+  const args = ['review', root, '--read', 'abcdef0123456789abcdef01', '--copy-to', root, '--home', root];
+  const result = spawnSync(process.execPath, [wrapper, '--app-root', app, ...args], { encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr); assert.deepEqual(JSON.parse(result.stdout).args, args);
+});
