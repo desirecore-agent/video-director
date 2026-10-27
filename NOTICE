@@ -40,6 +40,11 @@ are independently maintained in this repository. Existing MIT OpenFilm creative
 skills were adapted for narration-optional product demos, data explainers, music
 visuals and whiteboard explanations; their original texts remain preserved.
 
+The adapted motion skill now refers to the existing scene-read/scene-revise
+contract. Narration guidance distinguishes measured, estimated and unknown timing,
+preserves the meaning of human locks, and requires actual listening for audio claims.
+These changes are independently maintained; the preserved upstream texts are unchanged.
+
 Design reference only:
 https://github.com/jeszhou/overlay-studio
 Commit: e35e1aff9dae3b3addc21f68f3bcd51f95bdc1a8

@@ -92,6 +92,8 @@ window.film = {
 
 镜头页不出声，声音放在 `film.html`。镜头内 t=2 的音效若片段 `at=5`、入点为 0，则放在影片第 7 秒；移动镜头时一并检查相关声音。旁白、字幕、歌词不是影片的必需输入。使用说话素材时可在旁边放同名 WebVTT（例如 `assets/voice.wav` 与 `assets/voice.vtt`），一条字幕一个 cue、单词级时间标签，交由应用绘制字幕，避免把普通字幕画进镜头页。音乐节拍、人工标记和文字事件也可以组织动效；声音始终留在工程音轨。
 
+口播的时间依据须区分识别／录音词时间（measured）、文本比例或插值估时（estimated）与来源未知（unknown）；具体字段以安装版本回执为准。改字、翻译、换声或同路径替换媒体后重读实际字幕及其时间依据，不把保留了 cue 起止误称为逐词实测。使用现有字幕前置条件保存，冲突时重读并合并，不拿新版本直接覆盖旧草稿。字幕源文件的前置条件与影片 revision 是不同边界，不能互相代替。
+
 格式细节见 [SPEC.md](references/upstream/SPEC.md)。[原版 MANUAL.md](references/upstream/MANUAL.md) 仅用于溯源和格式对照，其中官方命令、Provider 设置和自动下载方式已由本技能的应用集成约定替代，不能作为执行授权。
 
 ## 通用动效与原创场景
@@ -196,7 +198,7 @@ node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" scene-revi
 
 影片 `base` 与原源码摘要是两项前置条件：即使 film 没变、只有源码被别人改动，也要按冲突重新读取来源、影片和人工修改，重新判断候选内容；不能只换一个新 `base` 或摘要重放旧改动。这些原字节前置条件属于 `scene-revise`，既有 `patch` 或直接文件写入仍沿原合同，不自动获得源码摘要保护。修订先完整发布独立新版本，再仅切换明确选中的 src，原源码与未选实例保留。目标已有同字节普通文件可以明确复用，不同内容不会被覆盖；不能靠覆盖旧文件、清锁、重插片段或直接写时间线绕过冲突。成功回执 `outcome: "completed"` 后，核对实际新 `filmRevision`、`publication`、`changed` 与共享实例，按本次修改目的选择必要观察。
 
-人工参数、时间、motion、DOM overrides 和锁的结构保留，不证明任意新 JavaScript 实际遵守了这些语义。读取 `compatibility` 和限制：声明的 manifest 只做静态实例输入校验，未声明的自由 HTML／SVG／Canvas／WebGL 仍可创作；`dynamicSemantics`／`domTargets` 为 `unknown` 时，不能声称参数效果相同或选择器在每个时点都存在。发现锁定目标不兼容时选择其他方案或提出建议，解锁仍需用户明确授权，不自动删锁消除问题。
+人工参数、时间、motion、DOM overrides 和锁的结构保留，不证明任意新 JavaScript 实际遵守了这些语义。 用户明确冻结整行外观与位置时，还需在相关时点核对字号、位置、出现时序与可见效果，不借父级变换、CSS 或换源间接改变该行；继续优化未锁对象。读取 `compatibility` 和限制：声明的 manifest 只做静态实例输入校验，未声明的自由 HTML／SVG／Canvas／WebGL 仍可创作；`dynamicSemantics`／`domTargets` 为 `unknown` 时，不能声称参数效果相同或选择器在每个时点都存在。发现锁定目标不兼容时选择其他方案或提出建议，解锁仍需用户明确授权，不自动删锁消除问题。
 
 新文件发布与 film 切换不是两文件事务、操作系统 CAS 或跨进程锁；同进程队列不能排除最后校验后的外部写者。失败或断联后，不把“没有成功回执”当成没有写入，也不盲目重发。若 `sceneSourceError` 的有限 `recovery.outcome` 为 `published-film-state-requires-inspection`，新版本已发布并保留：按 `action: "fresh-inspect-before-retry"`，结合 `publication`、可观察的 `filmRevision`、`selectedMappings` 和 `mappingsComplete` 重新 inspect／scene-read，确认哪些实例实际指向哪里，再决定是否重试或继续其他工作；null、缺失或不完整映射保持未知。不得按路径猜归属删除已发布文件，不承诺 exactly-once，也不手写身份或 ledger “修复”状态。CLI 的这类声明错误以 JSON 输出到 stderr，409 保留退出码 3；MCP 返回 `isError: true` 时仍读取有限恢复字段，不把普通错误正文猜成恢复回执。
 
