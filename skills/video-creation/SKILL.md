@@ -200,6 +200,8 @@ node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" scene-revi
 
 人工参数、时间、motion、DOM overrides 和锁的结构保留，不证明任意新 JavaScript 实际遵守了这些语义。 用户明确冻结整行外观与位置时，还需在相关时点核对字号、位置、出现时序与可见效果，不借父级变换、CSS 或换源间接改变该行；继续优化未锁对象。读取 `compatibility` 和限制：声明的 manifest 只做静态实例输入校验，未声明的自由 HTML／SVG／Canvas／WebGL 仍可创作；`dynamicSemantics`／`domTargets` 为 `unknown` 时，不能声称参数效果相同或选择器在每个时点都存在。发现锁定目标不兼容时选择其他方案或提出建议，解锁仍需用户明确授权，不自动删锁消除问题。
 
+不要仅以相同 CSS 规则或未变的 overrides JSON 证明锁行保留：新源还须保留对应 DOM 节点，并在实际画面上可见；背景 Canvas、遮挡或父级变换也可能使它消失。用修订前后的实际 PNG 核对锁行，再检查字幕、词流和图示是否重叠或裁切；只修已观察到的问题，不因此增加第二套锁定系统。
+
 新文件发布与 film 切换不是两文件事务、操作系统 CAS 或跨进程锁；同进程队列不能排除最后校验后的外部写者。失败或断联后，不把“没有成功回执”当成没有写入，也不盲目重发。若 `sceneSourceError` 的有限 `recovery.outcome` 为 `published-film-state-requires-inspection`，新版本已发布并保留：按 `action: "fresh-inspect-before-retry"`，结合 `publication`、可观察的 `filmRevision`、`selectedMappings` 和 `mappingsComplete` 重新 inspect／scene-read，确认哪些实例实际指向哪里，再决定是否重试或继续其他工作；null、缺失或不完整映射保持未知。不得按路径猜归属删除已发布文件，不承诺 exactly-once，也不手写身份或 ledger “修复”状态。CLI 的这类声明错误以 JSON 输出到 stderr，409 保留退出码 3；MCP 返回 `isError: true` 时仍读取有限恢复字段，不把普通错误正文猜成恢复回执。
 
 正文与传输都按公开 `limits` 控制：原文件有界读取，完整 `content` 实际 UTF-8 至多 256KiB，JSON 参数文件／序列化输入另受 768KiB 检查；完整读取回执会超过 480KiB 时明确省略全文，有限元数据仍超预算则失败，不拆请求绕预算。既有 MCP 的 512KiB 检查针对内部 data，并非整个双层转义 JSON-RPC 响应的线上大小上限，不能把字符数、原文件大小和线上字节混为一谈。无法取得足够完整且可靠的源码上下文或候选内容时说明缺口，仍由导演选择合适的创作与修改方式，不退回猜测或强制换模板。
