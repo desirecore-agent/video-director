@@ -24,11 +24,18 @@ the screen the moment they say it, and they speak from a window that never gets 
 
 ## What you have
 
-Their recording, cut by its in and out points, never re-encoded, its window shaped with CSS; its transcript with every
-word's time (an authorized transcription tool), from which Studio draws the subtitles. A version you treat (its background
-removed, its sound cleaned) is a new file under `assets/`, and the cuts stay trims of it. Their slides as pictures or
+Their original recording stays intact. Its in and out points, or those of an explicitly prepared working copy, define
+the cuts; CSS shapes its window. Its transcript carries word times from an authorized transcription tool, and Studio draws
+the subtitles. A version you treat (its background removed, its sound cleaned, or its HDR converted for working use) is a
+new file under `assets/`, with its source and time mapping retained; the cuts stay trims of it. Their slides as pictures or
 rebuilt as pages, anything you can make charts, pictures and motion with, images and sound from authorized media tools, your own
 built-in tools, and services explicitly authorized for this task. Ask before downloading anything large onto the person's computer.
+
+## 剪辑与解释画面
+
+按主技能的[口播长素材与文稿精剪](../video-creation/SKILL.md#口播长素材与文稿精剪)读取真实字幕版本、选择声画删除范围并预听，不将删字幕误当成删口播，也不绕过目标或联动轨道的人工锁。旧 ASR 的波形零点可能不同于原媒体零点，按实际工作副本回执映射；动效触发使用剪后成片时间。
+
+字幕承载原话，图解解释关系，避免两层文字重复压住脸、嘴或关键内容。讲到测试过程和数字时，优先使用真实录屏或数据；缺少来源则明确为原理示意或暂不展示数值，不把口播中的几组不同口径合成排行榜。特效数量、构件和原创场景仍由你按内容判断，不固定为逐句套卡；用实际编码画面和原声核对结果。
 
 ## With the person
 
