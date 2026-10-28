@@ -29,9 +29,16 @@ video. The speaker, watching it, would say: yes, that is what I meant.
 ## What you have
 
 The recording's transcript with every word's time (an authorized transcription tool, a WebVTT beside it), from which Studio draws
-the subtitles; the person sets how they look. A short is the same recording trimmed (`#t=`) and framed with CSS, never
-cut or re-encoded into new files; a page can also play the recording, silent, with its time set from t, when the
-picture has to move over it. Anything you can make titles and motion with, and your own built-in tools.
+the subtitles; the person sets how they look. A short trims the original recording or an explicitly prepared working
+copy (`#t=`) and frames it with CSS; individual fine cuts remain timeline edits rather than separately re-encoded files.
+A page can also play the recording, silent, with its time set from t, when the picture has to move over it.
+Anything you can make titles and motion with, and your own built-in tools.
+
+## 长素材与文稿精剪
+
+按主技能的[口播长素材与文稿精剪](../video-creation/SKILL.md#口播长素材与文稿精剪)选择工作媒体和选句计划。工作副本保留来源与时钟映射，不自动改变影片；原 ASR 波形时间须先映射回媒体时间，再映射到剪后的成片，不能因换源而丢失音轨起点。
+
+把重复起句、长等待和可能的识别幻听列成候选，由本次任务的内容与真实原声决定删保。`speech-cut` 只提出同片段整句或连续句的声画删除；先看受影响对象、调边界并预听，再 `speech-cut-apply`。单独改/删字幕不等于剪视频。影片或字幕版本变化后重新取计划，不用新基线掩盖旧选择；保留正常气口、完整条件和人工锁。播放器跳区试听不证明最终剪口自然，编码后再听看实际接缝。
 
 ## With the person
 

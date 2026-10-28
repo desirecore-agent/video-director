@@ -43,7 +43,13 @@ visuals and whiteboard explanations; their original texts remain preserved.
 The adapted motion skill now refers to the existing scene-read/scene-revise
 contract. Narration guidance distinguishes measured, estimated and unknown timing,
 preserves the meaning of human locks, and requires actual listening for audio claims.
-These changes are independently maintained; the preserved upstream texts are unchanged.
+The long-recording and presenter guidance now permits traceable SDR working media,
+preserves source audio-time origins, and distinguishes subtitle edits from planned
+media cuts guarded by film and subtitle revisions. The optional sentence-cut and
+preview guidance reuses the application's timeline rather than prescribing a
+creative workflow. These changes are independently maintained; the preserved
+upstream texts are unchanged.
+Write-request guidance also exposes complete parameters and baselines while retaining the same approval boundary, including supported standard input.
 
 Design reference only:
 https://github.com/jeszhou/overlay-studio
