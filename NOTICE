@@ -49,6 +49,7 @@ media cuts guarded by film and subtitle revisions. The optional sentence-cut and
 preview guidance reuses the application's timeline rather than prescribing a
 creative workflow. These changes are independently maintained; the preserved
 upstream texts are unchanged.
+Write-request guidance also exposes complete parameters and baselines while retaining the same approval boundary, including supported standard input.
 
 Design reference only:
 https://github.com/jeszhou/overlay-studio
