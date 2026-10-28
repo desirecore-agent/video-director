@@ -136,6 +136,18 @@ window.film = {
 
 口播的时间依据须区分识别／录音词时间（measured）、文本比例或插值估时（estimated）与来源未知（unknown）；具体字段以安装版本回执为准。改字、翻译、换声或同路径替换媒体后重读实际字幕及其时间依据，不把保留了 cue 起止误称为逐词实测。使用现有字幕前置条件保存，冲突时重读并合并，不拿新版本直接覆盖旧草稿。字幕源文件的前置条件与影片 revision 是不同边界，不能互相代替。
 
+安装版支持局部字幕强调时，由导演按语义选择少量重点，`emphasis:[{from,to}]` 使用该句当前 plain text 的 UTF-16 半开索引；标准 `<b>`／`<c.emphasis>` 可规范为 `<c.emphasis>`，只改强调范围，保留原文和时标。每词轮播的 karaoke 或独立图解中的关键词不等于字幕强调，仍须看实际编码字幕的层级，并保留人工整行的外观、位置和时间锁。
+
+安装版提供源字幕入口时，先读取完整源，再用原快照保存所选强调：
+
+```bash
+node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" captions-source "$PROJECT" "$MEDIA_SRC" --home "$APP_HOME"
+node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" captions-save "$PROJECT" --args "$SAVE_ARGS" --home "$APP_HOME"
+```
+
+`MEDIA_SRC` 是实际媒体相对路径；`SAVE_ARGS` 按安装版两命令的 `--schema` 写为 `{src,cues,from}`，`cues` 保留完整所有源句及未改的 marks/timing/alt 等字段，`from` 使用原读取的 `snapshot`，不能把可见裁片的 `captions` 列表当完整源。旧快照的 409 或缺少快照的 428 都须重读合并，不拿最新 `from` 覆盖旧草稿。
+
+
 格式细节见 [SPEC.md](references/upstream/SPEC.md)。[原版 MANUAL.md](references/upstream/MANUAL.md) 仅用于溯源和格式对照，其中官方命令、Provider 设置和自动下载方式已由本技能的应用集成约定替代，不能作为执行授权。
 
 ## 通用动效与原创场景
@@ -311,6 +323,8 @@ node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$P
 DOM 字体、边界、重叠和 override 目标测量只归返回的 `source.kind`、实际采样时间与视口：`current-project` 按该 review 的冻结输入和限制说明；普通 `check` 的 `live-check`／`live-files-unfenced` 没有源版本 fence，不能补称冻结，也不能补造 `filmRevision` 或输入摘要。同次采样窗口不是 DOM 与像素的原子快照。不能因 `filmRevision` 相同，就把当前 DOM 结论贴到旧 `export-job` 的编码帧上。需要两种材料时分别引用，编码帧的可见判断来自实际读取的图片，DOM 测量用于定位其自身工程源的问题。
 
 判断小屏阅读时，实际读取目标宽度材料并核对它自己的摘要和实际尺寸；它是整帧的缩小观察，不是假设发生了新的响应式排版。每帧 `presentation` 区分请求宽度与受原帧、`maxEdge` 等上界限制后的实际尺寸和 `limitedBy`，不放大原图，不能把未达到的尺寸称为已按要求观察。组合图的整图尺寸与 `layout.cells` 的实际尺寸／缩放分别读；其 `derivedFrom` 指向同次原帧，组合图自身的 `path`／`sha256` 才用于此次 `Read` 的 `file_path`／`expected_sha256`，不能误用某个源帧摘要。它仍是 `generated-not-viewed` 的材料，生成不等于已看。必要文字、主体和装饰信息的职责不同，不设全局最低字号，不只凭源码字号或未缩小截图下结论。
+
+实际审片也要核图解面板顶部与四边的安全留白，以及它和脸、头发、嘴、字幕的关系，避免无意贴边或遮挡；留白随构图判断，不设固定像素模板，涉及人工锁时改未锁对象或保留建议。180／360px 文字读得清只支持所看文字的可读性，不能据此宣称构图、信息层级、节奏或听感均已通过。
 
 观察首尾时引用同一准确来源和版本的首帧、末帧与各自时间；`export-job` 沿前述真实 PTS 选择实际编码尾帧，不自行用 `duration - 0.04` 或 duration×fps 猜测；`current-project` 仍是工程求帧与末态预览，不改称编码尾帧。组合图的 `timeBasis: "composite-not-timed-frame"` 不代表单一采样时间，每个 cell 的时间归其 `derivedFrom` 原帧；首尾指向同一实际帧时也不伪称两次不同时间观察。静帧可以说明构图与结束状态，不能证明连续节奏、声音连续性或无缝循环；硬切也可以符合意图。若问题是循环接缝、动作节奏或音画同步，再按已有授权选择实际片段或听觉观察，并如实报告覆盖范围。
 

@@ -50,6 +50,7 @@ preview guidance reuses the application's timeline rather than prescribing a
 creative workflow. These changes are independently maintained; the preserved
 upstream texts are unchanged.
 Write-request guidance also exposes complete parameters and baselines while retaining the same approval boundary, including supported standard input.
+Safe-spacing and optional semantic subtitle-emphasis guidance are independently maintained and preserve human locks and the unchanged upstream references.
 
 Design reference only:
 https://github.com/jeszhou/overlay-studio
