@@ -307,7 +307,7 @@ node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$P
 
 ### 按用途判断与选择观察
 
-从用户请求和已有工程上下文判断作品交给谁、在哪里看、主要信息是什么、实际观看尺寸、是否需要声音，以及期望怎样结束。缺少非关键细节时可说明合理假设继续推进，只有会实质改变结果的选择才澄清；这不是必填问卷。开场可以先给信息或先营造氛围，结尾可以硬切、停留、淡出或循环，不设统一秒数或镜头数量，也不因做质量检查而把原创 HTML／SVG／Canvas／WebGL 收窄为模板。
+从用户请求和已有工程上下文判断作品交给谁、在哪里看、主要信息是什么、实际观看尺寸、是否需要声音，以及期望怎样结束。制作或修订中主动选择能暴露本次风险的观察：有字幕时看代表性长句与语义重点，有图解时看信息主次及人物关系，布局或动效改变时看入场、停留和退场；节奏或剪口问题再选择相应连续短段与声音观察。它们按作品实际内容取舍，不是每次必做的清单。局部问题先用现有工程审片或必要短段编码核对改动与前后差异，再决定是否值得整片导出；已有准确材料可以复用，不因审片本身重复渲染。缺少非关键细节时可说明合理假设继续推进，只有会实质改变结果的选择才澄清。开场可以先给信息或先营造氛围，结尾可以硬切、停留、淡出或循环，不设统一秒数或镜头数量，也不因做质量检查而把原创 HTML／SVG／Canvas／WebGL 收窄为模板。
 
 安装版提供 P1 合同时，先用离线 `review --schema` 查看它返回的 `contractVersion`、`requestSchema`、`findingSchema` 与 `artifactSchema`；MCP `video_review` 使用同一请求 Schema，不在本技能维护另一份字段表。以下例子只为已完成 job 选择首尾和手机宽度观察，不重新导出，宽度仍按本次交付选择：
 
@@ -318,7 +318,7 @@ node "${SKILL_DIR}/scripts/video-creation.mjs" --app-root "$APP_ROOT" review "$P
 
 `--target-width` 对应请求的 `targetWidth`，`--first-last` 对应 `firstLast: true`。未给 `times`／`count` 时，首尾请求只选择明确首点 0 与末帧，不额外取默认采样；timed `frames` 仍合计最多 6 帧，`artifacts` 单列至多 1 张首尾组合图，不当作第七个时间帧。每张 PNG 至多 4MiB、帧与组合图合计至多 12MiB，遵守真实失败回执，不分拆请求绕预算。旧安装没有合同或选项时报告缺口，不把旧输出当作 P1 已执行。
 
-安装版检查提供 `findings` 时，读取它实际返回的 `source`、`time`、`selector`、`bounds`、`measurement`、`evidence` 和 `limitations`，结合 `coverage` 说明实际观察范围，不从日志文字猜出一份报告。`ok` 与原有 `lines`、`files` 仍分别按原合同解释；技术检查通过不等于作品表达充分，提示的数量或级别不自动决定可否导出、是否应修订或 Task 是否完成。无 finding、未执行和不能测准都不当通过；Canvas／WebGL、复杂变换、复杂背景等应保留返回的 `unknown`。例如 DOM 没有裁切不证明小屏文字可读，也不证明对比度足够。
+安装版检查提供 `findings` 时，读取它实际返回的 `source`、`time`、`selector`、`bounds`、`measurement`、`evidence` 和 `limitations`，结合 `coverage` 说明实际观察范围，不从日志文字猜出一份报告。工程审片尤其确认是否包含影片画面与应用外置字幕；未覆盖的图层不能记作已检查，旧版只含影片画面的结果不证明字幕安全。源版本和样式不同的材料分别引用，不用相同 filmRevision 代替完整来源核对。`ok` 与原有 `lines`、`files` 仍分别按原合同解释；技术检查通过不等于作品表达充分，提示的数量或级别不自动决定可否导出、是否应修订或 Task 是否完成。无 finding、未执行和不能测准都不当通过；Canvas／WebGL、复杂变换、复杂背景等应保留返回的 `unknown`。例如 DOM 没有裁切不证明小屏文字可读，也不证明对比度足够。
 
 DOM 字体、边界、重叠和 override 目标测量只归返回的 `source.kind`、实际采样时间与视口：`current-project` 按该 review 的冻结输入和限制说明；普通 `check` 的 `live-check`／`live-files-unfenced` 没有源版本 fence，不能补称冻结，也不能补造 `filmRevision` 或输入摘要。同次采样窗口不是 DOM 与像素的原子快照。不能因 `filmRevision` 相同，就把当前 DOM 结论贴到旧 `export-job` 的编码帧上。需要两种材料时分别引用，编码帧的可见判断来自实际读取的图片，DOM 测量用于定位其自身工程源的问题。
 
