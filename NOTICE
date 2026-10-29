@@ -53,6 +53,7 @@ Write-request guidance also exposes complete parameters and baselines while reta
 Safe-spacing and optional semantic subtitle-emphasis guidance are independently maintained and preserve human locks and the unchanged upstream references.
 Portrait information-safe-zone guidance uses relative frame dimensions and preserves creative choice, explicit user constraints and human locks.
 Active purpose-based review guidance selects observations from the current risks, checks covered film/subtitle layers, and reuses short-segment and comparison capabilities without prescribing a creative workflow.
+Effective-layout, cue-audio bound to observed versions and media bytes, and existing-review recovery guidance reuses the application contracts without adding an audio service or changing upstream references.
 
 Design reference only:
 https://github.com/jeszhou/overlay-studio
