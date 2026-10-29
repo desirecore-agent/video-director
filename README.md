@@ -25,7 +25,7 @@ node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用
 node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用目录> inspect <项目目录> --home <同一安装的应用数据目录>
 ```
 
-它直接调用 `<应用目录>/desirecore/cli.mjs`，保留参数、退出码和原工作目录，不通过 shell、不下载官方原版、不请求模型。应用领域 CLI 提供 `start`、`inspect`、`patch`、`scene-read`、`scene-revise`、`motion-catalog`、`motion-inspect`、`motion-install`、`motion-take`、`motion-patch`、`check`、`review`、`captions`、`captions-source`、`captions-save`、`prepare-media`、`speech-cut`、`speech-cut-apply`、`get`、`render` 与渲染任务查询/重试/取消；`motion-install` 复制应用自带的本地 SDK，`motion-take` 通过现有 Saved 依赖闭包取用内置构件，是否插入时间线由导演决定；`motion-patch` 沿用真实 revision 与锁保护；渲染可传完整编码、alpha、画幅、帧率和质量参数。包装器可用 `--` 分隔应用定位选项与领域参数。精确参数以安装版本的 `--help` 和 [主技能](skills/video-creation/SKILL.md) 为准。
+它直接调用 `<应用目录>/desirecore/cli.mjs`，保留参数、退出码和原工作目录，不通过 shell、不下载官方原版、不请求模型。应用领域 CLI 提供 `start`、`inspect`、`patch`、`scene-read`、`scene-revise`、`motion-catalog`、`motion-inspect`、`motion-install`、`motion-take`、`motion-patch`、`check`、`review`、`reviews`、`subtitle-style`、`caption-audio`、`captions`、`captions-source`、`captions-save`、`prepare-media`、`speech-cut`、`speech-cut-apply`、`get`、`render` 与渲染任务查询/重试/取消；`motion-install` 复制应用自带的本地 SDK，`motion-take` 通过现有 Saved 依赖闭包取用内置构件，是否插入时间线由导演决定；`motion-patch` 沿用真实 revision 与锁保护；渲染可传完整编码、alpha、画幅、帧率和质量参数。包装器可用 `--` 分隔应用定位选项与领域参数。精确参数以安装版本的 `--help` 和 [主技能](skills/video-creation/SKILL.md) 为准。
 
 受管安装发现的准确调用与缺省处理见[主技能](skills/video-creation/SKILL.md)：`get` 返回的 `app.instanceId` 用作 `release_history` 的 `installation_id`，后者的 `current.materialRoot` 与顶层可选 `currentData.dataRoot` 分别用于 `--app-root` 与 `--home`。这些路径不增加访问权限，也不证明服务正在运行；入口关联或应用工作请求不自动向 Bash 注入环境变量。缺少摘要时仅使用安装者明确提供的路径，不从历史版本、运行绑定或平台账本推算。
 
@@ -46,6 +46,8 @@ node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用
 竖屏默认优先 9:16，上下各 15% 不放实质性内容，核心信息完整边界及入退场过程保持在中间 70%；用户明确要求优先，背景装饰可出血，构图由导演自主选择，安全区与既有人工锁冲突时说明而不解锁，详见[主技能的审片约定](skills/video-creation/SKILL.md#按用途判断与选择观察)。
 
 口播时间须分清识别／录音的实测词时间、文本比例或插值估时、未知来源。改字或换声后核对新音轨、字幕与时间依据；字幕保存使用安装版本的前置条件，冲突后重读合并。实际听取最终编码并查看对应画面，才报告已观察段落的同步；静帧、转写正确与无整体音轨偏移均不能代替听审。创作仍由导演决定，用户冻结的整行外观与位置也须在换源后实际保留。
+
+安装版支持时，`subtitle-style` 公开保存样式及计算生效布局，不把锚点或计算字号当真实字框；`caption-audio` 先通过 `captions --with-media-digests` 显式取得所选句媒体的大小／SHA原值，再连同准确影片／句源版本沿原队列生成短窗混音WAV，完成回执与摘要核准后供原生、具听觉能力的工具或人工核听，现有Read不等于听到音频。审片创建结果未知时先用 `reviews` 分页找来源和参数匹配的候选，再按原ID读取回执；已知ID读取或音频等待未完成时保留原ID查询，不盲目重新捕获或提交。精确请求以各命令离线 `--schema` 和[主技能](skills/video-creation/SKILL.md)为准；保留疑词、原声、自主判断与人工锁。
 
 安装版支持时，可用 `prepare-media` 为长视频或明确 HDR 素材准备可追溯的 SDR 工作副本，保留原片、源摘要与音轨起点映射，是否换入时间线由导演决定。`captions` 读取实际句和字幕源版本；`speech-cut` 只生成选句删声画计划，预听并确认后由 `speech-cut-apply` 以固定影片与字幕双前置条件提交。仅删字幕不剪掉声音或视频，旧计划冲突后重算；界面保留单批撤销和人工锁。它们复用既有时间线，不要求机械删停顿或固定特效流程，具体边界见[主技能](skills/video-creation/SKILL.md#口播长素材与文稿精剪)。
 
