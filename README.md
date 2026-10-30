@@ -31,7 +31,7 @@ node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用
 
 已有受管服务只复用，不重复 `start` 或重新注册。确需启动且已确认没有该 home 的运行实例时，再按安装版本的运行合同使用 `start`，指定应用自己的 `--home` 与 `--project`；其余命令连接同一个应用 home 的已运行服务。渲染提交成功不等于渲染完成；导演需根据 job 回执核对输出，实际查看/播放后才报告对应验证。
 
-写操作先读取并在审批说明中展开完整 JSON、前置版本与影响；支持标准输入时也仍经同一审批，拒绝后不执行已拒脚本，详见[主技能](skills/video-creation/SKILL.md#修改与冲突)。
+写操作先读取并在审批说明中展开完整 JSON、前置版本与影响；支持标准输入时也仍经同一审批，拒绝后不执行已拒脚本；未知安装脚本链的核实、明确材料不足时的只读补证与新审批边界，统一见[主技能](skills/video-creation/SKILL.md#修改与冲突)。
 
 操作字段不明确时，包装器的 `patch --help` 可发现 `patch --schema`：它无需服务、项目或 home 就返回安装版本的只读 Draft-07 操作合同，MCP `video_patch` 使用同源 Schema。导演按公开合同与真实 `inspect` 修改，不需要扫描安装材料源码。`RUNTIME.md` 不在读域时明确记录缺口；已知正式服务和同一实例的实际 home 仍可按现有授权使用公开帮助与合同，不绕过文件范围或猜测启动。最小换源示例及人工锁保留要求见[主技能的修改与冲突](skills/video-creation/SKILL.md#修改与冲突)。
 
