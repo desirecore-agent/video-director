@@ -37,6 +37,22 @@ test('安装审批补证说明保留授权边界且双语入口指向同一规�
   assert(english.split('\n').some((line) => line.includes('read-only evidence gathering') && line.includes(link)));
 });
 
+test('服务健康不替代正式数据根的渲染依赖就绪', () => {
+  const skill = readFileSync(resolve(root, 'skills/video-creation/SKILL.md'), 'utf8');
+  for (const requirement of [
+    'HTTP 健康或工程可读取不等于渲染依赖就绪',
+    '历史候选数据根的准备结果不能证明当前正式数据根已就绪',
+    '按当前安装的实际数据根及公开运行合同核实依赖状态',
+    '必要准备沿用下文的补证与审批边界',
+    '不据此重复安装应用或改写平台机制',
+  ]) assert(skill.includes(requirement), `缺少依赖就绪边界：${requirement}`);
+  const chinese = readFileSync(resolve(root, 'README.md'), 'utf8');
+  const english = readFileSync(resolve(root, 'README.en-US.md'), 'utf8');
+  assert(chinese.includes('HTTP 健康或工程可读取不等于当前正式数据根的渲染依赖就绪'));
+  assert(english.includes('HTTP health or a readable project does not prove rendering dependencies are ready in the current formal data root'));
+  assert(english.includes('preparation in a historical candidate data root cannot replace that verification'));
+});
+
 test('package validation rejects a stale skill reference and hardcoded Provider', (t) => {
   const copy = mkdtempSync(resolve(tmpdir(), 'video-director-content-'));
   t.after(() => rmSync(copy, { recursive: true, force: true }));

@@ -29,7 +29,7 @@ node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用
 
 受管安装发现的准确调用与缺省处理见[主技能](skills/video-creation/SKILL.md)：`get` 返回的 `app.instanceId` 用作 `release_history` 的 `installation_id`，后者的 `current.materialRoot` 与顶层可选 `currentData.dataRoot` 分别用于 `--app-root` 与 `--home`。这些路径不增加访问权限，也不证明服务正在运行；入口关联或应用工作请求不自动向 Bash 注入环境变量。缺少摘要时仅使用安装者明确提供的路径，不从历史版本、运行绑定或平台账本推算。
 
-已有受管服务只复用，不重复 `start` 或重新注册。确需启动且已确认没有该 home 的运行实例时，再按安装版本的运行合同使用 `start`，指定应用自己的 `--home` 与 `--project`；其余命令连接同一个应用 home 的已运行服务。渲染提交成功不等于渲染完成；导演需根据 job 回执核对输出，实际查看/播放后才报告对应验证。
+已有受管服务只复用，不重复 `start` 或重新注册。确需启动且已确认没有该 home 的运行实例时，再按安装版本的运行合同使用 `start`，指定应用自己的 `--home` 与 `--project`；其余命令连接同一个应用 home 的已运行服务。HTTP 健康或工程可读取不等于当前正式数据根的渲染依赖就绪，历史候选数据根的准备结果不能代替核实；必要准备遵循[主技能](skills/video-creation/SKILL.md)的既有补证与审批边界。渲染提交成功不等于渲染完成；导演需根据 job 回执核对输出，实际查看/播放后才报告对应验证。
 
 写操作先读取并在审批说明中展开完整 JSON、前置版本与影响；支持标准输入时也仍经同一审批，拒绝后不执行已拒脚本；未知安装脚本链的核实、明确材料不足时的只读补证与新审批边界，统一见[主技能](skills/video-creation/SKILL.md#修改与冲突)。
 
