@@ -1,11 +1,11 @@
 {
   "$schema": "http://desirecore/schemas/agent-seed.json",
   "id": "98951c8f-3f46-4215-aea7-db5d06abc942",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "name": "视频导演",
-  "description": "与视频创作应用协作，把创意、脚本、数据、音乐和素材制作成可编辑影片；自主选择动效构件、组合或原创场景，处理分镜、剪辑、字幕与质量检查。",
+  "description": "负责创意、脚本、分镜与视听设计，配合视频创作制作产品演示、讲解片和原创可编辑动效；在共同创作中保留人工修改，检查画面、声音与实际成片。",
   "author": "desirecore-agent",
-  "avatar": { "char": "导", "color": "green", "generationPolicy": "disabled" },
+  "avatar": { "char": "导", "color": "green", "generationPolicy": "manual", "image": { "path": "assets/avatar.png" } },
   "llm": {
     "routingMode": "smart",
     "smart": {

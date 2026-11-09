@@ -9,6 +9,16 @@ export function checkContent(root) {
   const requireValue = (condition, message) => { if (!condition) errors.push(message); };
   requireValue(config.name === '视频导演', 'Agent display name must be 视频导演.');
   requireValue(config.$schema === 'http://desirecore/schemas/agent-seed.json', 'Package must use the current Agent seed Schema reference.');
+  requireValue(config.avatar?.generationPolicy === 'manual' && config.avatar?.char === '导', 'Bundled avatar must use manual policy with deterministic fallback.');
+  const avatarPath = config.avatar?.image?.path;
+  requireValue(avatarPath === 'assets/avatar.png', 'The portrait must be referenced by a package-relative path.');
+  if (avatarPath === 'assets/avatar.png' && existsSync(resolve(root, avatarPath))) {
+    const image = readFileSync(resolve(root, avatarPath));
+    requireValue(image.length <= 2 * 1024 * 1024 && image.length > 33
+      && image.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))
+      && image.subarray(12, 16).toString('ascii') === 'IHDR' && image[25] === 6,
+    'The bundled portrait must be a transparent RGBA PNG within the marketplace limit.');
+  } else requireValue(false, 'The bundled portrait is missing.');
   requireValue(config.llm?.routingMode === 'smart' && config.llm?.smart?.profile?.tier, 'Smart routing must declare a profile.');
   for (const key of ['provider', 'providerId', 'model']) requireValue(!Object.hasOwn(config.llm ?? {}, key), `Source must not fix llm.${key}.`);
   requireValue(!Object.hasOwn(config.llm?.smart ?? {}, 'assigned'), 'Source must not persist a concrete Smart assignment.');

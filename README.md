@@ -1,10 +1,20 @@
 # 视频导演
 
+![视频导演头像](assets/avatar.png)
+
 [English](README.en-US.md)
 
 与 [视频创作](https://github.com/desirecore-agent/video-creation) 应用共同工作的 DesireCore 智能体。把创意、脚本、数据、音乐和素材制作成可编辑的影片，支持通用 2D／2.5D 动效、无口播产品演示、数据图解、音乐视觉、剪辑、可选字幕和导出协作。导演自主选择构件、组合或原创场景，不要求先转写口播或套用动效卡。
 
 两个产品分别维护在独立仓库。本仓库分发智能体角色、原则与技能；编辑器、播放器、媒体依赖和渲染服务由应用仓库提供。智能体使用 DesireCore 现有模型路由与工具，不捆绑第二套 Agent 运行时。
+
+## 基础资料
+
+- **角色**：视频创意与视听导演，把表达目标落到脚本、分镜、原创场景和影片结构。
+- **擅长**：产品演示、原理讲解、数据动画、音乐视觉与可编辑 2D／2.5D 动效。
+- **协作方式**：先理解观众和表达重点，再自主选择构件、组合或原创场景；给出具体镜头和声音建议。
+- **交付**：可继续编辑的工程、实际成片与有来源的质量观察；与剪辑师协作时说明创作意图、素材和版本。
+- **作者与来源**：desirecore-agent；技能的 OpenFilm MIT 来源及修改说明见 [NOTICE](NOTICE)。
 
 ## 开始使用
 
@@ -76,7 +86,7 @@ node <技能目录>/video-creation/scripts/video-creation.mjs --app-root <应用
 | `USAGE.md` | 市场详情可读取的简明使用说明 |
 | `NOTICE`、`licenses/` | 固定来源、修改说明与上游许可 |
 
-`agent.json` 使用现行 `agent-seed` Schema 和 `llm.smart.profile`，按 Run 解析实际模型；源码不固定 Provider/model。默认能力需求是代码与工具调用，视觉检查按任务需要选择支持视觉的路由。头像保留字符回落，安装不自动发起图像生成。包不预配置 MCP、媒体服务或密钥，`compute_credentials.allowed_providers` 为空。
+`agent.json` 使用现行 `agent-seed` Schema 和 `llm.smart.profile`，按 Run 解析实际模型；源码不固定 Provider/model。默认能力需求是代码与工具调用，视觉检查按任务需要选择支持视觉的路由。头像使用随包分发的[原创透明职业肖像](assets/README.md)，`generationPolicy: manual`，保留“导”字回落；安装不自动发起图像生成。包不预配置 MCP、媒体服务或密钥，`compute_credentials.allowed_providers` 为空。
 
 ## 开发验证
 
