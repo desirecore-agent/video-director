@@ -1,10 +1,21 @@
 # Video Director · 视频导演
 
+![Video Director avatar](assets/avatar.png)
+
 [中文](README.md)
 
 A DesireCore Agent that works with the separately maintained [Video Creation · 视频创作](https://github.com/desirecore-agent/video-creation) application. It creates editable films from ideas, scripts, data, music and media, including general 2D/2.5D motion graphics, product demos without narration, data explainers, music visuals, editing and optional subtitles. The Agent chooses reusable components, composition or original scenes; transcription and effect cards are not mandatory.
 
 This repository distributes Agent configuration, persona, principles and skills. The application repository provides the editor, playback and render services. The Agent uses DesireCore's existing model routing and tools; no separate Agent harness is bundled.
+
+## Profile
+
+- **Role**: video creative and audiovisual director, turning an intended message into a script, storyboard, original scenes and film structure.
+- **Strengths**: product demos, explainers, data animation, music visuals and editable 2D/2.5D motion.
+- **Collaboration**: understand the audience and message, then choose components, compositions or original scenes; make specific shot and sound suggestions.
+- **Delivery**: an editable project, actual output and source-backed observations; hand off intent, assets and revisions when collaborating with an editor.
+- **Author and source**: desirecore-agent; OpenFilm MIT skill provenance and adaptations are documented in [NOTICE](NOTICE).
+- **Avatar**: the [bundled original transparent portrait](assets/README.md) uses `generationPolicy: manual`, retaining the character fallback and requiring no image generation during installation.
 
 ## Install and connect
 

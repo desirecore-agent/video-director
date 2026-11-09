@@ -66,3 +66,15 @@ test('package validation rejects a stale skill reference and hardcoded Provider'
   assert(result.errors.some((error) => error.includes('Missing skill: missing-skill')));
   assert(result.errors.some((error) => error.includes('llm.providerId')));
 });
+
+
+test('content validation rejects a missing or invalid bundled portrait', (t) => {
+  const copy = mkdtempSync(resolve(tmpdir(), 'video-director-avatar-'));
+  t.after(() => rmSync(copy, { recursive: true, force: true }));
+  cpSync(root, copy, { recursive: true, filter: (source) => !source.split('/').includes('.git') });
+  const avatar = resolve(copy, 'assets/avatar.png');
+  writeFileSync(avatar, 'not an image');
+  assert(checkContent(copy).errors.some((error) => error.includes('transparent RGBA PNG')));
+  rmSync(avatar);
+  assert(checkContent(copy).errors.some((error) => error.includes('portrait is missing')));
+});
